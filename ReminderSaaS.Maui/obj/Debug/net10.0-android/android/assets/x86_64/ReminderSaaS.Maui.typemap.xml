@@ -1,0 +1,10 @@
+<api type="debug" assembly-name="ReminderSaaS.Maui" mvid="933db02ac7634e8181b6689574fe5c2e">
+  <java-to-managed>
+    <entry java-name="crc642c22536aec010396/MainActivity" managed-name="ReminderSaaS.Maui.MainActivity, ReminderSaaS.Maui" managed-type-token-id="33554441" />
+    <entry java-name="crc642c22536aec010396/MainApplication" managed-name="ReminderSaaS.Maui.MainApplication, ReminderSaaS.Maui" managed-type-token-id="33554442" />
+  </java-to-managed>
+  <managed-to-java>
+    <entry java-name="crc642c22536aec010396/MainActivity" managed-name="ReminderSaaS.Maui.MainActivity, ReminderSaaS.Maui" managed-type-token-id="33554441" />
+    <entry java-name="crc642c22536aec010396/MainApplication" managed-name="ReminderSaaS.Maui.MainApplication, ReminderSaaS.Maui" managed-type-token-id="33554442" />
+  </managed-to-java>
+</api>

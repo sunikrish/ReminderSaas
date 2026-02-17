@@ -1,0 +1,11 @@
+/Users/Suni/Documents/src/Shared.Contracts/bin/Debug/net10.0/ReminderSaaS.Shared.Contracts.deps.json
+/Users/Suni/Documents/src/Shared.Contracts/bin/Debug/net10.0/ReminderSaaS.Shared.Contracts.dll
+/Users/Suni/Documents/src/Shared.Contracts/bin/Debug/net10.0/ReminderSaaS.Shared.Contracts.pdb
+/Users/Suni/Documents/src/Shared.Contracts/obj/Debug/net10.0/ReminderSaaS.Shared.Contracts.GeneratedMSBuildEditorConfig.editorconfig
+/Users/Suni/Documents/src/Shared.Contracts/obj/Debug/net10.0/ReminderSaaS.Shared.Contracts.AssemblyInfoInputs.cache
+/Users/Suni/Documents/src/Shared.Contracts/obj/Debug/net10.0/ReminderSaaS.Shared.Contracts.AssemblyInfo.cs
+/Users/Suni/Documents/src/Shared.Contracts/obj/Debug/net10.0/ReminderSaaS.Shared.Contracts.csproj.CoreCompileInputs.cache
+/Users/Suni/Documents/src/Shared.Contracts/obj/Debug/net10.0/ReminderSaaS.Shared.Contracts.dll
+/Users/Suni/Documents/src/Shared.Contracts/obj/Debug/net10.0/refint/ReminderSaaS.Shared.Contracts.dll
+/Users/Suni/Documents/src/Shared.Contracts/obj/Debug/net10.0/ReminderSaaS.Shared.Contracts.pdb
+/Users/Suni/Documents/src/Shared.Contracts/obj/Debug/net10.0/ref/ReminderSaaS.Shared.Contracts.dll

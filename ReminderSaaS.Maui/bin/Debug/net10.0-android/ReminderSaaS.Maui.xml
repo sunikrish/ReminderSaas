@@ -1,0 +1,23 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>ReminderSaaS.Maui</name>
+    </assembly>
+    <members>
+        <member name="T:ReminderSaaS.Maui.ViewModels.MainPageViewModel">
+            <inheritdoc/>
+        </member>
+        <member name="F:ReminderSaaS.Maui.ViewModels.MainPageViewModel.addReminderCommand">
+            <summary>The backing field for <see cref="P:ReminderSaaS.Maui.ViewModels.MainPageViewModel.AddReminderCommand"/>.</summary>
+        </member>
+        <member name="P:ReminderSaaS.Maui.ViewModels.MainPageViewModel.AddReminderCommand">
+            <summary>Gets an <see cref="T:CommunityToolkit.Mvvm.Input.IAsyncRelayCommand"/> instance wrapping <see cref="M:ReminderSaaS.Maui.ViewModels.MainPageViewModel.AddReminderAsync"/>.</summary>
+        </member>
+        <member name="T:ReminderSaaS.Maui.Resource">
+            <summary>
+            Android Resource Designer class.
+            Exposes the Android Resource designer assembly into the project Namespace.
+            </summary>
+        </member>
+    </members>
+</doc>
