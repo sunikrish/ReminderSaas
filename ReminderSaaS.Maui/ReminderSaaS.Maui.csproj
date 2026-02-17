@@ -71,4 +71,8 @@
 		<PackageReference Include="CommunityToolkit.Mvvm" Version="8.3.2" />
 	</ItemGroup>
 
+	<ItemGroup>
+		<ProjectReference Include="..\Shared.Contracts\ReminderSaaS.Shared.Contracts.csproj" />
+	</ItemGroup>
+
 </Project>

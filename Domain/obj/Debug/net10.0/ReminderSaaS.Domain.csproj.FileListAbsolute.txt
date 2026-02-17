@@ -9,3 +9,7 @@
 /Users/Suni/Documents/src/Domain/obj/Debug/net10.0/refint/ReminderSaaS.Domain.dll
 /Users/Suni/Documents/src/Domain/obj/Debug/net10.0/ReminderSaaS.Domain.pdb
 /Users/Suni/Documents/src/Domain/obj/Debug/net10.0/ref/ReminderSaaS.Domain.dll
+/Users/Suni/Documents/src/Domain/obj/Debug/net10.0/ReminderSaaS.Domain.sourcelink.json
+/Users/Suni/Documents/src/Backend.Function/bin/output/ReminderSaaS.Domain.deps.json
+/Users/Suni/Documents/src/Backend.Function/bin/output/ReminderSaaS.Domain.dll
+/Users/Suni/Documents/src/Backend.Function/bin/output/ReminderSaaS.Domain.pdb

@@ -15,3 +15,7 @@
 /Users/Suni/Documents/src/Application/obj/Debug/net10.0/refint/ReminderSaaS.Application.dll
 /Users/Suni/Documents/src/Application/obj/Debug/net10.0/ReminderSaaS.Application.pdb
 /Users/Suni/Documents/src/Application/obj/Debug/net10.0/ref/ReminderSaaS.Application.dll
+/Users/Suni/Documents/src/Application/obj/Debug/net10.0/ReminderSaaS.Application.sourcelink.json
+/Users/Suni/Documents/src/Backend.Function/bin/output/ReminderSaaS.Application.deps.json
+/Users/Suni/Documents/src/Backend.Function/bin/output/ReminderSaaS.Application.dll
+/Users/Suni/Documents/src/Backend.Function/bin/output/ReminderSaaS.Application.pdb

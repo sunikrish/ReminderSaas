@@ -19,3 +19,8 @@
 /Users/Suni/Documents/src/Infrastructure/obj/Debug/net10.0/ReminderSaaS.Infrastructure.pdb
 /Users/Suni/Documents/src/Infrastructure/obj/Debug/net10.0/ReminderSaaS.Infrastructure.genruntimeconfig.cache
 /Users/Suni/Documents/src/Infrastructure/obj/Debug/net10.0/ref/ReminderSaaS.Infrastructure.dll
+/Users/Suni/Documents/src/Infrastructure/obj/Debug/net10.0/ReminderSaaS.Infrastructure.sourcelink.json
+/Users/Suni/Documents/src/Backend.Function/bin/output/ReminderSaaS.Infrastructure.deps.json
+/Users/Suni/Documents/src/Backend.Function/bin/output/ReminderSaaS.Infrastructure.runtimeconfig.json
+/Users/Suni/Documents/src/Backend.Function/bin/output/ReminderSaaS.Infrastructure.dll
+/Users/Suni/Documents/src/Backend.Function/bin/output/ReminderSaaS.Infrastructure.pdb

@@ -4,11 +4,28 @@
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:ReminderSaaS.Maui"
+    xmlns:schedules="clr-namespace:ReminderSaaS.Maui.Views.Schedules"
     Title="ReminderSaaS.Maui">
 
     <ShellContent
         Title="Home"
         ContentTemplate="{DataTemplate local:MainPage}"
         Route="MainPage" />
+
+    <!-- Schedule Routes -->
+    <ShellContent
+        Title="Calendar"
+        ContentTemplate="{DataTemplate schedules:CalendarPage}"
+        Route="calendar" />
+
+    <ShellContent
+        Title="Schedule Form"
+        ContentTemplate="{DataTemplate schedules:ScheduleFormPage}"
+        Route="scheduleform" />
+
+    <ShellContent
+        Title="Schedule Detail"
+        ContentTemplate="{DataTemplate schedules:ScheduleDetailPage}"
+        Route="scheduledetail" />
 
 </Shell>
