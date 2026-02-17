@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ReminderSaaS.Maui.Views.Schedules.CalendarPage"
+             Title="Calendar">
+
+    <VerticalStackLayout Padding="10" Spacing="15">
+        <!-- Month Navigation -->
+        <HorizontalStackLayout HorizontalOptions="Center" Spacing="20">
+            <Button Text="◄" 
+                    Command="{Binding PreviousMonthCommand}"
+                    Padding="12,8"
+                    FontSize="16"
+                    CornerRadius="5"/>
+            <Label Text="{Binding MonthYearDisplay}"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   VerticalTextAlignment="Center"
+                   MinimumWidthRequest="200"
+                   HorizontalTextAlignment="Center"/>
+            <Button Text="►" 
+                    Command="{Binding NextMonthCommand}"
+                    Padding="12,8"
+                    FontSize="16"
+                    CornerRadius="5"/>
+        </HorizontalStackLayout>
+
+        <!-- Week Headers -->
+        <Grid ColumnDefinitions="*,*,*,*,*,*,*" RowDefinitions="Auto" Padding="2" ColumnSpacing="2">
+            <Label Text="Sun" FontAttributes="Bold" FontSize="14" HorizontalTextAlignment="Center" Grid.Column="0"/>
+            <Label Text="Mon" FontAttributes="Bold" FontSize="14" HorizontalTextAlignment="Center" Grid.Column="1"/>
+            <Label Text="Tue" FontAttributes="Bold" FontSize="14" HorizontalTextAlignment="Center" Grid.Column="2"/>
+            <Label Text="Wed" FontAttributes="Bold" FontSize="14" HorizontalTextAlignment="Center" Grid.Column="3"/>
+            <Label Text="Thu" FontAttributes="Bold" FontSize="14" HorizontalTextAlignment="Center" Grid.Column="4"/>
+            <Label Text="Fri" FontAttributes="Bold" FontSize="14" HorizontalTextAlignment="Center" Grid.Column="5"/>
+            <Label Text="Sat" FontAttributes="Bold" FontSize="14" HorizontalTextAlignment="Center" Grid.Column="6"/>
+        </Grid>
+
+        <!-- Calendar Grid -->
+        <ScrollView>
+            <VerticalStackLayout Spacing="2" Padding="2">
+                <CollectionView ItemsSource="{Binding CalendarWeeks}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate>
+                            <Grid ColumnDefinitions="*,*,*,*,*,*,*" RowDefinitions="Auto" Padding="2" ColumnSpacing="2" RowSpacing="2">
+                                <Frame Grid.Column="0" Padding="5" CornerRadius="8" HasShadow="False" BorderColor="{Binding Days[0].BorderColor}" BackgroundColor="{Binding Days[0].BackgroundColor}">
+                                    <Frame.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectDateCommand}" CommandParameter="{Binding Days[0]}"/>
+                                    </Frame.GestureRecognizers>
+                                    <VerticalStackLayout Spacing="3">
+                                        <Label Text="{Binding Days[0].DayNumber}" FontAttributes="Bold" FontSize="14" HorizontalTextAlignment="Center" TextColor="{Binding Days[0].TextColor}"/>
+                                        <CollectionView ItemsSource="{Binding Days[0].Schedules}" Margin="0,2">
+                                            <CollectionView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Label Text="{Binding Title}" FontSize="10" Opacity="0.7" LineBreakMode="TailTruncation" MaxLines="1"/>
+                                                </DataTemplate>
+                                            </CollectionView.ItemTemplate>
+                                        </CollectionView>
+                                        <Label Text="{Binding Days[0].Schedules.Count, StringFormat='{0} event(s)'}" FontSize="9" Opacity="0.5" IsVisible="{Binding Days[0].HasSchedules}"/>
+                                    </VerticalStackLayout>
+                                </Frame>
+
+                                <Frame Grid.Column="1" Padding="5" CornerRadius="8" HasShadow="False" BorderColor="{Binding Days[1].BorderColor}" BackgroundColor="{Binding Days[1].BackgroundColor}">
+                                    <Frame.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectDateCommand}" CommandParameter="{Binding Days[1]}"/>
+                                    </Frame.GestureRecognizers>
+                                    <VerticalStackLayout Spacing="3">
+                                        <Label Text="{Binding Days[1].DayNumber}" FontAttributes="Bold" FontSize="14" HorizontalTextAlignment="Center" TextColor="{Binding Days[1].TextColor}"/>
+                                        <CollectionView ItemsSource="{Binding Days[1].Schedules}" Margin="0,2">
+                                            <CollectionView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Label Text="{Binding Title}" FontSize="10" Opacity="0.7" LineBreakMode="TailTruncation" MaxLines="1"/>
+                                                </DataTemplate>
+                                            </CollectionView.ItemTemplate>
+                                        </CollectionView>
+                                        <Label Text="{Binding Days[1].Schedules.Count, StringFormat='{0} event(s)'}" FontSize="9" Opacity="0.5" IsVisible="{Binding Days[1].HasSchedules}"/>
+                                    </VerticalStackLayout>
+                                </Frame>
+
+                                <Frame Grid.Column="2" Padding="5" CornerRadius="8" HasShadow="False" BorderColor="{Binding Days[2].BorderColor}" BackgroundColor="{Binding Days[2].BackgroundColor}">
+                                    <Frame.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectDateCommand}" CommandParameter="{Binding Days[2]}"/>
+                                    </Frame.GestureRecognizers>
+                                    <VerticalStackLayout Spacing="3">
+                                        <Label Text="{Binding Days[2].DayNumber}" FontAttributes="Bold" FontSize="14" HorizontalTextAlignment="Center" TextColor="{Binding Days[2].TextColor}"/>
+                                        <CollectionView ItemsSource="{Binding Days[2].Schedules}" Margin="0,2">
+                                            <CollectionView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Label Text="{Binding Title}" FontSize="10" Opacity="0.7" LineBreakMode="TailTruncation" MaxLines="1"/>
+                                                </DataTemplate>
+                                            </CollectionView.ItemTemplate>
+                                        </CollectionView>
+                                        <Label Text="{Binding Days[2].Schedules.Count, StringFormat='{0} event(s)'}" FontSize="9" Opacity="0.5" IsVisible="{Binding Days[2].HasSchedules}"/>
+                                    </VerticalStackLayout>
+                                </Frame>
+
+                                <Frame Grid.Column="3" Padding="5" CornerRadius="8" HasShadow="False" BorderColor="{Binding Days[3].BorderColor}" BackgroundColor="{Binding Days[3].BackgroundColor}">
+                                    <Frame.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectDateCommand}" CommandParameter="{Binding Days[3]}"/>
+                                    </Frame.GestureRecognizers>
+                                    <VerticalStackLayout Spacing="3">
+                                        <Label Text="{Binding Days[3].DayNumber}" FontAttributes="Bold" FontSize="14" HorizontalTextAlignment="Center" TextColor="{Binding Days[3].TextColor}"/>
+                                        <CollectionView ItemsSource="{Binding Days[3].Schedules}" Margin="0,2">
+                                            <CollectionView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Label Text="{Binding Title}" FontSize="10" Opacity="0.7" LineBreakMode="TailTruncation" MaxLines="1"/>
+                                                </DataTemplate>
+                                            </CollectionView.ItemTemplate>
+                                        </CollectionView>
+                                        <Label Text="{Binding Days[3].Schedules.Count, StringFormat='{0} event(s)'}" FontSize="9" Opacity="0.5" IsVisible="{Binding Days[3].HasSchedules}"/>
+                                    </VerticalStackLayout>
+                                </Frame>
+
+                                <Frame Grid.Column="4" Padding="5" CornerRadius="8" HasShadow="False" BorderColor="{Binding Days[4].BorderColor}" BackgroundColor="{Binding Days[4].BackgroundColor}">
+                                    <Frame.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectDateCommand}" CommandParameter="{Binding Days[4]}"/>
+                                    </Frame.GestureRecognizers>
+                                    <VerticalStackLayout Spacing="3">
+                                        <Label Text="{Binding Days[4].DayNumber}" FontAttributes="Bold" FontSize="14" HorizontalTextAlignment="Center" TextColor="{Binding Days[4].TextColor}"/>
+                                        <CollectionView ItemsSource="{Binding Days[4].Schedules}" Margin="0,2">
+                                            <CollectionView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Label Text="{Binding Title}" FontSize="10" Opacity="0.7" LineBreakMode="TailTruncation" MaxLines="1"/>
+                                                </DataTemplate>
+                                            </CollectionView.ItemTemplate>
+                                        </CollectionView>
+                                        <Label Text="{Binding Days[4].Schedules.Count, StringFormat='{0} event(s)'}" FontSize="9" Opacity="0.5" IsVisible="{Binding Days[4].HasSchedules}"/>
+                                    </VerticalStackLayout>
+                                </Frame>
+
+                                <Frame Grid.Column="5" Padding="5" CornerRadius="8" HasShadow="False" BorderColor="{Binding Days[5].BorderColor}" BackgroundColor="{Binding Days[5].BackgroundColor}">
+                                    <Frame.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectDateCommand}" CommandParameter="{Binding Days[5]}"/>
+                                    </Frame.GestureRecognizers>
+                                    <VerticalStackLayout Spacing="3">
+                                        <Label Text="{Binding Days[5].DayNumber}" FontAttributes="Bold" FontSize="14" HorizontalTextAlignment="Center" TextColor="{Binding Days[5].TextColor}"/>
+                                        <CollectionView ItemsSource="{Binding Days[5].Schedules}" Margin="0,2">
+                                            <CollectionView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Label Text="{Binding Title}" FontSize="10" Opacity="0.7" LineBreakMode="TailTruncation" MaxLines="1"/>
+                                                </DataTemplate>
+                                            </CollectionView.ItemTemplate>
+                                        </CollectionView>
+                                        <Label Text="{Binding Days[5].Schedules.Count, StringFormat='{0} event(s)'}" FontSize="9" Opacity="0.5" IsVisible="{Binding Days[5].HasSchedules}"/>
+                                    </VerticalStackLayout>
+                                </Frame>
+
+                                <Frame Grid.Column="6" Padding="5" CornerRadius="8" HasShadow="False" BorderColor="{Binding Days[6].BorderColor}" BackgroundColor="{Binding Days[6].BackgroundColor}">
+                                    <Frame.GestureRecognizers>
+                                        <TapGestureRecognizer Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.SelectDateCommand}" CommandParameter="{Binding Days[6]}"/>
+                                    </Frame.GestureRecognizers>
+                                    <VerticalStackLayout Spacing="3">
+                                        <Label Text="{Binding Days[6].DayNumber}" FontAttributes="Bold" FontSize="14" HorizontalTextAlignment="Center" TextColor="{Binding Days[6].TextColor}"/>
+                                        <CollectionView ItemsSource="{Binding Days[6].Schedules}" Margin="0,2">
+                                            <CollectionView.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Label Text="{Binding Title}" FontSize="10" Opacity="0.7" LineBreakMode="TailTruncation" MaxLines="1"/>
+                                                </DataTemplate>
+                                            </CollectionView.ItemTemplate>
+                                        </CollectionView>
+                                        <Label Text="{Binding Days[6].Schedules.Count, StringFormat='{0} event(s)'}" FontSize="9" Opacity="0.5" IsVisible="{Binding Days[6].HasSchedules}"/>
+                                    </VerticalStackLayout>
+                                </Frame>
+                            </Grid>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Schedules for Selected Date -->
+        <Label Text="Schedules for Selected Date" FontAttributes="Bold" FontSize="16" Margin="0,10,0,5"/>
+        
+        <CollectionView ItemsSource="{Binding SchedulesForSelectedDate}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Frame Padding="12" Margin="0,5" CornerRadius="8" HasShadow="True">
+                        <VerticalStackLayout Spacing="5">
+                            <Label Text="{Binding Title}" FontAttributes="Bold" FontSize="14"/>
+                            <Label Text="{Binding Description}" FontSize="12" Opacity="0.7"/>
+                            <Label Text="{Binding Time, StringFormat='⏰ {0}'}" FontSize="12" Opacity="0.7"/>
+                            <Label Text="{Binding Location}" FontSize="12" Opacity="0.7"/>
+                            <HorizontalStackLayout Spacing="10" Margin="0,5,0,0">
+                                <Button Text="Edit" Padding="10,5" FontSize="12"
+                                       Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.EditScheduleCommand}"
+                                       CommandParameter="{Binding .}"/>
+                                <Button Text="Delete" Padding="10,5" FontSize="12"
+                                       Command="{Binding Source={RelativeSource AncestorType={x:Type ContentPage}}, Path=BindingContext.DeleteScheduleCommand}"
+                                       CommandParameter="{Binding .}"/>
+                            </HorizontalStackLayout>
+                        </VerticalStackLayout>
+                    </Frame>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+
+        <!-- Add Schedule Button -->
+        <Button Text="➕ Add Schedule" 
+               Margin="0,10"
+               Command="{Binding CreateScheduleCommand}"
+               Padding="15,10"
+               FontSize="14"/>
+
+        <!-- Loading Indicator -->
+        <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" Color="Blue"/>
+
+        <!-- Error Message -->
+        <Label Text="{Binding ErrorMessage}" 
+              TextColor="Red" 
+              IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNullOrEmptyBoolConverter}}"
+              Margin="0,10"/>
+    </VerticalStackLayout>
+
+</ContentPage>
+

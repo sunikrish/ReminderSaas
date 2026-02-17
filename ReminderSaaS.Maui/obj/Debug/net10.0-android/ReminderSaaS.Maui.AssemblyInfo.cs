@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("ReminderSaaS.Maui")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0+422a1753b604818c731996ac05d8f45a7445929e")]
 [assembly: System.Reflection.AssemblyProductAttribute("ReminderSaaS.Maui")]
 [assembly: System.Reflection.AssemblyTitleAttribute("ReminderSaaS.Maui")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

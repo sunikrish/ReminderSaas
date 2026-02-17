@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ReminderSaaS.Maui.Views.Schedules.ScheduleFormPage"
+             Title="Schedule">
+
+    <VerticalStackLayout Padding="20" Spacing="15">
+        <!-- Title -->
+        <VerticalStackLayout Spacing="5">
+            <Label Text="Title" FontAttributes="Bold"/>
+            <Entry x:Name="TitleEntry" 
+                  Text="{Binding Title}"
+                  Placeholder="Enter schedule title"
+                  MaxLength="255"/>
+        </VerticalStackLayout>
+
+        <!-- Description -->
+        <VerticalStackLayout Spacing="5">
+            <Label Text="Description" FontAttributes="Bold"/>
+            <Editor x:Name="DescriptionEditor"
+                   Text="{Binding Description}"
+                   Placeholder="Enter description (optional)"
+                   HeightRequest="100"
+                   MaxLength="1000"/>
+        </VerticalStackLayout>
+
+        <!-- Date -->
+        <VerticalStackLayout Spacing="5">
+            <Label Text="Date" FontAttributes="Bold"/>
+            <DatePicker Date="{Binding SelectedDate, Converter={StaticResource DateOnlyConverter}}"/>
+        </VerticalStackLayout>
+
+        <!-- Time -->
+        <VerticalStackLayout Spacing="5">
+            <Label Text="Time (Optional)" FontAttributes="Bold"/>
+            <TimePicker Time="{Binding SelectedTime}"/>
+        </VerticalStackLayout>
+
+        <!-- Location -->
+        <VerticalStackLayout Spacing="5">
+            <Label Text="Location" FontAttributes="Bold"/>
+            <Entry x:Name="LocationEntry" 
+                  Text="{Binding Location}"
+                  Placeholder="Enter location (optional)"
+                  MaxLength="255"/>
+        </VerticalStackLayout>
+
+        <!-- Category -->
+        <VerticalStackLayout Spacing="5">
+            <Label Text="Category" FontAttributes="Bold"/>
+            <Picker ItemsSource="{Binding Categories}"
+                   SelectedItem="{Binding SelectedCategory}"/>
+        </VerticalStackLayout>
+
+        <!-- Error Message -->
+        <Label Text="{Binding ErrorMessage}" 
+              TextColor="Red" 
+              IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNullOrEmptyBoolConverter}}"
+              Margin="0,10"/>
+
+        <!-- Buttons -->
+        <HorizontalStackLayout Spacing="10" Margin="0,20" HorizontalOptions="FillAndExpand">
+            <Button Text="Save" 
+                   HorizontalOptions="FillAndExpand"
+                   Command="{Binding SaveCommand}"/>
+            <Button Text="Cancel" 
+                   HorizontalOptions="FillAndExpand"
+                   Command="{Binding CancelCommand}"/>
+        </HorizontalStackLayout>
+
+        <!-- Loading Indicator -->
+        <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" Color="Blue"/>
+    </VerticalStackLayout>
+
+</ContentPage>

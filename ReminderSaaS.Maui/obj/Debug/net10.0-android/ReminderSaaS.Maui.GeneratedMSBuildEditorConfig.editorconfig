@@ -76,3 +76,33 @@ build_metadata.AdditionalFiles.Inflator = SourceGen
 build_metadata.AdditionalFiles.NoWarn = 
 build_metadata.AdditionalFiles.EnableDiagnostics = 
 build_metadata.AdditionalFiles.LineInfo = 
+
+[/Users/Suni/Documents/src/ReminderSaaS.Maui/Views/Schedules/CalendarPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = ReminderSaaS.Maui.Views.Schedules.CalendarPage.xaml
+build_metadata.AdditionalFiles.TargetPath = Views/Schedules/CalendarPage.xaml
+build_metadata.AdditionalFiles.RelativePath = Views/Schedules/CalendarPage.xaml
+build_metadata.AdditionalFiles.Inflator = SourceGen
+build_metadata.AdditionalFiles.NoWarn = 
+build_metadata.AdditionalFiles.EnableDiagnostics = 
+build_metadata.AdditionalFiles.LineInfo = 
+
+[/Users/Suni/Documents/src/ReminderSaaS.Maui/Views/Schedules/ScheduleDetailPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = ReminderSaaS.Maui.Views.Schedules.ScheduleDetailPage.xaml
+build_metadata.AdditionalFiles.TargetPath = Views/Schedules/ScheduleDetailPage.xaml
+build_metadata.AdditionalFiles.RelativePath = Views/Schedules/ScheduleDetailPage.xaml
+build_metadata.AdditionalFiles.Inflator = SourceGen
+build_metadata.AdditionalFiles.NoWarn = 
+build_metadata.AdditionalFiles.EnableDiagnostics = 
+build_metadata.AdditionalFiles.LineInfo = 
+
+[/Users/Suni/Documents/src/ReminderSaaS.Maui/Views/Schedules/ScheduleFormPage.xaml]
+build_metadata.AdditionalFiles.GenKind = Xaml
+build_metadata.AdditionalFiles.ManifestResourceName = ReminderSaaS.Maui.Views.Schedules.ScheduleFormPage.xaml
+build_metadata.AdditionalFiles.TargetPath = Views/Schedules/ScheduleFormPage.xaml
+build_metadata.AdditionalFiles.RelativePath = Views/Schedules/ScheduleFormPage.xaml
+build_metadata.AdditionalFiles.Inflator = SourceGen
+build_metadata.AdditionalFiles.NoWarn = 
+build_metadata.AdditionalFiles.EnableDiagnostics = 
+build_metadata.AdditionalFiles.LineInfo = 

@@ -2500,6 +2500,16 @@
             "related": ".aar;.pdb;.xml"
           }
         }
+      },
+      "ReminderSaaS.Shared.Contracts/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
+        }
       }
     },
     "net10.0-android36.0/android-arm64": {
@@ -5000,6 +5010,16 @@
           "lib/net10.0-android36.0/Xamarin.KotlinX.Serialization.Core.Jvm.dll": {
             "related": ".aar;.pdb;.xml"
           }
+        }
+      },
+      "ReminderSaaS.Shared.Contracts/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
         }
       }
     },
@@ -7502,6 +7522,16 @@
             "related": ".aar;.pdb;.xml"
           }
         }
+      },
+      "ReminderSaaS.Shared.Contracts/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
+        }
       }
     },
     "net10.0-android36.0/iossimulator-arm64": {
@@ -10002,6 +10032,16 @@
           "lib/net10.0-android36.0/Xamarin.KotlinX.Serialization.Core.Jvm.dll": {
             "related": ".aar;.pdb;.xml"
           }
+        }
+      },
+      "ReminderSaaS.Shared.Contracts/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
         }
       }
     },
@@ -12504,6 +12544,16 @@
             "related": ".aar;.pdb;.xml"
           }
         }
+      },
+      "ReminderSaaS.Shared.Contracts/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
+        }
       }
     },
     "net10.0-ios26.2": {
@@ -12984,6 +13034,16 @@
         "type": "package",
         "build": {
           "build/Microsoft.NET.ILLink.Tasks.props": {}
+        }
+      },
+      "ReminderSaaS.Shared.Contracts/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
         }
       }
     },
@@ -13466,6 +13526,16 @@
         "build": {
           "build/Microsoft.NET.ILLink.Tasks.props": {}
         }
+      },
+      "ReminderSaaS.Shared.Contracts/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
+        }
       }
     },
     "net10.0-ios26.2/android-x64": {
@@ -13946,6 +14016,16 @@
         "type": "package",
         "build": {
           "build/Microsoft.NET.ILLink.Tasks.props": {}
+        }
+      },
+      "ReminderSaaS.Shared.Contracts/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
         }
       }
     },
@@ -14428,6 +14508,16 @@
         "build": {
           "build/Microsoft.NET.ILLink.Tasks.props": {}
         }
+      },
+      "ReminderSaaS.Shared.Contracts/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
+        }
       }
     },
     "net10.0-ios26.2/maccatalyst-arm64": {
@@ -14908,6 +14998,16 @@
         "type": "package",
         "build": {
           "build/Microsoft.NET.ILLink.Tasks.props": {}
+        }
+      },
+      "ReminderSaaS.Shared.Contracts/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
         }
       }
     },
@@ -15390,6 +15490,16 @@
         "build": {
           "build/Microsoft.NET.ILLink.Tasks.props": {}
         }
+      },
+      "ReminderSaaS.Shared.Contracts/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
+        }
       }
     },
     "net10.0-maccatalyst26.2/android-arm64": {
@@ -15870,6 +15980,16 @@
         "type": "package",
         "build": {
           "build/Microsoft.NET.ILLink.Tasks.props": {}
+        }
+      },
+      "ReminderSaaS.Shared.Contracts/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
         }
       }
     },
@@ -16352,6 +16472,16 @@
         "build": {
           "build/Microsoft.NET.ILLink.Tasks.props": {}
         }
+      },
+      "ReminderSaaS.Shared.Contracts/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
+        }
       }
     },
     "net10.0-maccatalyst26.2/iossimulator-arm64": {
@@ -16833,6 +16963,16 @@
         "build": {
           "build/Microsoft.NET.ILLink.Tasks.props": {}
         }
+      },
+      "ReminderSaaS.Shared.Contracts/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
+        }
       }
     },
     "net10.0-maccatalyst26.2/maccatalyst-arm64": {
@@ -17313,6 +17453,16 @@
         "type": "package",
         "build": {
           "build/Microsoft.NET.ILLink.Tasks.props": {}
+        }
+      },
+      "ReminderSaaS.Shared.Contracts/1.0.0": {
+        "type": "project",
+        "framework": ".NETCoreApp,Version=v10.0",
+        "compile": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
+        },
+        "runtime": {
+          "bin/placeholder/ReminderSaaS.Shared.Contracts.dll": {}
         }
       }
     }
@@ -20902,6 +21052,11 @@
         "xamarin.kotlinx.serialization.core.jvm.1.9.0.1.nupkg.sha512",
         "xamarin.kotlinx.serialization.core.jvm.nuspec"
       ]
+    },
+    "ReminderSaaS.Shared.Contracts/1.0.0": {
+      "type": "project",
+      "path": "../Shared.Contracts/ReminderSaaS.Shared.Contracts.csproj",
+      "msbuildProject": "../Shared.Contracts/ReminderSaaS.Shared.Contracts.csproj"
     }
   },
   "projectFileDependencyGroups": {
@@ -20909,19 +21064,22 @@
       "CommunityToolkit.Mvvm >= 8.3.2",
       "Microsoft.Extensions.Logging.Debug >= 10.0.0",
       "Microsoft.Maui.Controls >= 10.0.20",
-      "Microsoft.NET.ILLink.Tasks >= 10.0.3"
+      "Microsoft.NET.ILLink.Tasks >= 10.0.3",
+      "ReminderSaaS.Shared.Contracts >= 1.0.0"
     ],
     "net10.0-ios26.2": [
       "CommunityToolkit.Mvvm >= 8.3.2",
       "Microsoft.Extensions.Logging.Debug >= 10.0.0",
       "Microsoft.Maui.Controls >= 10.0.20",
-      "Microsoft.NET.ILLink.Tasks >= 10.0.3"
+      "Microsoft.NET.ILLink.Tasks >= 10.0.3",
+      "ReminderSaaS.Shared.Contracts >= 1.0.0"
     ],
     "net10.0-maccatalyst26.2": [
       "CommunityToolkit.Mvvm >= 8.3.2",
       "Microsoft.Extensions.Logging.Debug >= 10.0.0",
       "Microsoft.Maui.Controls >= 10.0.20",
-      "Microsoft.NET.ILLink.Tasks >= 10.0.3"
+      "Microsoft.NET.ILLink.Tasks >= 10.0.3",
+      "ReminderSaaS.Shared.Contracts >= 1.0.0"
     ]
   },
   "packageFolders": {
@@ -20952,15 +21110,27 @@
       "frameworks": {
         "net10.0-android36.0": {
           "targetAlias": "net10.0-android",
-          "projectReferences": {}
+          "projectReferences": {
+            "/Users/Suni/Documents/src/Shared.Contracts/ReminderSaaS.Shared.Contracts.csproj": {
+              "projectPath": "/Users/Suni/Documents/src/Shared.Contracts/ReminderSaaS.Shared.Contracts.csproj"
+            }
+          }
         },
         "net10.0-ios26.2": {
           "targetAlias": "net10.0-ios",
-          "projectReferences": {}
+          "projectReferences": {
+            "/Users/Suni/Documents/src/Shared.Contracts/ReminderSaaS.Shared.Contracts.csproj": {
+              "projectPath": "/Users/Suni/Documents/src/Shared.Contracts/ReminderSaaS.Shared.Contracts.csproj"
+            }
+          }
         },
         "net10.0-maccatalyst26.2": {
           "targetAlias": "net10.0-maccatalyst",
-          "projectReferences": {}
+          "projectReferences": {
+            "/Users/Suni/Documents/src/Shared.Contracts/ReminderSaaS.Shared.Contracts.csproj": {
+              "projectPath": "/Users/Suni/Documents/src/Shared.Contracts/ReminderSaaS.Shared.Contracts.csproj"
+            }
+          }
         }
       },
       "warningProperties": {

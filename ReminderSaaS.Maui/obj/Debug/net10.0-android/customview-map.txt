@@ -26,6 +26,8 @@ com.google.android.material.appbar.AppBarLayout;/Users/Suni/Documents/src/Remind
 com.google.android.material.appbar.AppBarLayout;/Users/Suni/Documents/src/ReminderSaaS.Maui/obj/Debug/net10.0-android/lp/163/jl/res/layout/shellcontent.xml
 com.google.android.material.appbar.AppBarLayout;/Users/Suni/Documents/src/ReminderSaaS.Maui/obj/Debug/net10.0-android/lp/165/jl/res/layout/navigationlayout.xml
 declare-styleable;/Users/Suni/Documents/src/ReminderSaaS.Maui/obj/Debug/net10.0-android/lp/165/jl/res/values/attr.xml
+domain;obj/Debug/net10.0-android/res/xml/network_security_config.xml
+domain-config;obj/Debug/net10.0-android/res/xml/network_security_config.xml
 external-cache-path;/Users/Suni/Documents/src/ReminderSaaS.Maui/obj/Debug/net10.0-android/lp/166/jl/res/xml/microsoft_maui_essentials_fileprovider_file_paths.xml
 external-path;/Users/Suni/Documents/src/ReminderSaaS.Maui/obj/Debug/net10.0-android/lp/166/jl/res/xml/microsoft_maui_essentials_fileprovider_file_paths.xml
 foreground;obj/Debug/net10.0-android/resizetizer/r/mipmap-anydpi-v26/appicon_round.xml
@@ -43,6 +45,7 @@ layer-list;obj/Debug/net10.0-android/resizetizer/sp/drawable/maui_splash_image.x
 microsoft.maui.controls.platform.compatibility.ShellFlyoutLayout;/Users/Suni/Documents/src/ReminderSaaS.Maui/obj/Debug/net10.0-android/lp/163/jl/res/layout/flyoutcontent.xml
 monochrome;obj/Debug/net10.0-android/resizetizer/r/mipmap-anydpi-v26/appicon_round.xml
 monochrome;obj/Debug/net10.0-android/resizetizer/r/mipmap-anydpi-v26/appicon.xml
+network-security-config;obj/Debug/net10.0-android/res/xml/network_security_config.xml
 paths;/Users/Suni/Documents/src/ReminderSaaS.Maui/obj/Debug/net10.0-android/lp/166/jl/res/xml/microsoft_maui_essentials_fileprovider_file_paths.xml
 resources;/Users/Suni/Documents/src/ReminderSaaS.Maui/obj/Debug/net10.0-android/lp/163/jl/res/values/strings.xml
 resources;/Users/Suni/Documents/src/ReminderSaaS.Maui/obj/Debug/net10.0-android/lp/164/jl/res/values/values.xml

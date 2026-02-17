@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="ReminderSaaS.Maui.Views.Schedules.ScheduleDetailPage"
+             Title="Schedule Details">
+
+    <VerticalStackLayout Padding="20" Spacing="15">
+        <!-- Loading State -->
+        <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" Color="Blue"/>
+
+        <!-- Error Message -->
+        <Label Text="{Binding ErrorMessage}" 
+              TextColor="Red" 
+              IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNullOrEmptyBoolConverter}}"
+              Margin="0,10"/>
+
+        <!-- DEBUG: Show binding state -->
+        <VerticalStackLayout Padding="10" BackgroundColor="#FFE6E6" Spacing="3">
+            <Label Text="DEBUG INFO:" FontSize="12" FontAttributes="Bold" TextColor="Red"/>
+            <Label Text="{Binding Schedule, StringFormat='Schedule is null: {0}'}" FontSize="10" TextColor="Red"/>
+            <Label Text="{Binding IsLoading, StringFormat='IsLoading: {0}'}" FontSize="10" TextColor="Red"/>
+            <Label Text="{Binding Schedule.Title, StringFormat='Title bound: {0}'}" FontSize="10" TextColor="Red"/>
+        </VerticalStackLayout>
+
+        <!-- Schedule Details -->
+        <VerticalStackLayout IsVisible="{Binding Schedule, Converter={StaticResource NotNullToBoolConverter}}" Spacing="10">
+            <!-- Title -->
+            <Label Text="{Binding Schedule.Title}" 
+                  FontSize="24" 
+                  FontAttributes="Bold"
+                  TextColor="Black"/>
+
+            <!-- Category Badge -->
+            <HorizontalStackLayout Spacing="5">
+                <Frame Padding="10,5" CornerRadius="5" HasShadow="False">
+                    <Label Text="{Binding Schedule.Category}" 
+                          FontSize="12" 
+                          FontAttributes="Bold"
+                          TextColor="White"/>
+                </Frame>
+            </HorizontalStackLayout>
+
+            <!-- Date and Time -->
+            <VerticalStackLayout Spacing="3">
+                <Label Text="Date &amp; Time" FontAttributes="Bold" FontSize="14"/>
+                <Label Text="{Binding Schedule.Date, StringFormat='{0:dddd, MMMM d, yyyy}'}" 
+                      FontSize="12"/>
+                <Label Text="{Binding Schedule.Time, StringFormat='Time: {0}'}" 
+                      FontSize="12" 
+                      IsVisible="{Binding Schedule.Time}"/>
+            </VerticalStackLayout>
+
+            <!-- Location -->
+            <VerticalStackLayout Spacing="3" IsVisible="{Binding Schedule.Location, Converter={StaticResource StringNullOrEmptyBoolConverter}}">
+                <Label Text="Location" FontAttributes="Bold" FontSize="14"/>
+                <Label Text="{Binding Schedule.Location}" FontSize="12"/>
+            </VerticalStackLayout>
+
+            <!-- Description -->
+            <VerticalStackLayout Spacing="3" IsVisible="{Binding Schedule.Description, Converter={StaticResource StringNullOrEmptyBoolConverter}}">
+                <Label Text="Description" FontAttributes="Bold" FontSize="14"/>
+                <Label Text="{Binding Schedule.Description}" FontSize="12" LineBreakMode="WordWrap"/>
+            </VerticalStackLayout>
+
+            <!-- Created Date -->
+            <Label Text="{Binding Schedule.CreatedAt, StringFormat='Created: {0:g}'}" 
+                  FontSize="10" 
+                  Opacity="0.6"
+                  Margin="0,20,0,0"/>
+
+            <!-- Action Buttons -->
+            <HorizontalStackLayout Spacing="10" Margin="0,20" HorizontalOptions="FillAndExpand">
+                <Button Text="Edit" 
+                       HorizontalOptions="FillAndExpand"
+                       Command="{Binding EditScheduleCommand}"/>
+                <Button Text="Delete" 
+                       HorizontalOptions="FillAndExpand"
+                       BackgroundColor="Red"
+                       Command="{Binding DeleteScheduleCommand}"/>
+            </HorizontalStackLayout>
+
+            <!-- Back Button -->
+            <Button Text="Back" 
+                   Margin="0,10"
+                   Command="{Binding GoBackCommand}"/>
+        </VerticalStackLayout>
+    </VerticalStackLayout>
+
+</ContentPage>

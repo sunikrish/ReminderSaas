@@ -1,0 +1,184 @@
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
+using ReminderSaaS.Shared.Contracts.Schedules;
+using ReminderSaaS.Maui.Services;
+
+namespace ReminderSaaS.Maui.ViewModels.Schedules;
+
+/// <summary>
+/// ViewModel for creating and editing schedules.
+/// </summary>
+public partial class ScheduleFormViewModel : ObservableObject
+{
+    private readonly IScheduleApiClient _apiClient;
+    private Guid? _editingScheduleId;
+
+    [ObservableProperty]
+    private string title = string.Empty;
+
+    [ObservableProperty]
+    private string description = string.Empty;
+
+    [ObservableProperty]
+    private DateOnly selectedDate;
+
+    [ObservableProperty]
+    private TimeSpan? selectedTime;
+
+    [ObservableProperty]
+    private string location = string.Empty;
+
+    [ObservableProperty]
+    private string selectedCategory = "Personal";
+
+    [ObservableProperty]
+    private bool isLoading;
+
+    [ObservableProperty]
+    private string errorMessage = string.Empty;
+
+    private readonly string[] _categories = { "Health", "Tax", "School", "Personal", "Other" };
+
+    public IReadOnlyList<string> Categories => _categories;
+
+    public ScheduleFormViewModel(IScheduleApiClient apiClient)
+    {
+        _apiClient = apiClient;
+        SelectedDate = DateOnly.FromDateTime(DateTime.Now);
+    }
+
+    /// <summary>
+    /// Initializes the form for creating a new schedule.
+    /// </summary>
+    [RelayCommand]
+    public void InitializeForCreate(DateOnly? date = null)
+    {
+        _editingScheduleId = null;
+        Clear();
+        if (date.HasValue)
+        {
+            SelectedDate = date.Value;
+        }
+    }
+
+    /// <summary>
+    /// Initializes the form for editing an existing schedule.
+    /// </summary>
+    [RelayCommand]
+    public async Task InitializeForEditAsync(Guid scheduleId)
+    {
+        try
+        {
+            IsLoading = true;
+            ErrorMessage = string.Empty;
+
+            var schedule = await _apiClient.GetScheduleByIdAsync(scheduleId);
+            if (schedule != null)
+            {
+                _editingScheduleId = schedule.Id;
+                Title = schedule.Title;
+                Description = schedule.Description ?? string.Empty;
+                SelectedDate = schedule.Date;
+                SelectedTime = schedule.Time?.ToTimeSpan();
+                Location = schedule.Location ?? string.Empty;
+                SelectedCategory = schedule.Category;
+            }
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = "Failed to load schedule details";
+            System.Diagnostics.Debug.WriteLine($"Load schedule error: {ex.Message}");
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    /// <summary>
+    /// Saves the schedule (creates or updates).
+    /// </summary>
+    [RelayCommand]
+    public async Task SaveAsync()
+    {
+        try
+        {
+            if (string.IsNullOrWhiteSpace(Title))
+            {
+                ErrorMessage = "Title is required";
+                return;
+            }
+
+            IsLoading = true;
+            ErrorMessage = string.Empty;
+
+            if (_editingScheduleId.HasValue)
+            {
+                // Update existing schedule
+                var updateDto = new UpdateScheduleDto(
+                    _editingScheduleId.Value,
+                    Title,
+                    SelectedDate,
+                    SelectedCategory,
+                    string.IsNullOrWhiteSpace(Description) ? null : Description,
+                    SelectedTime.HasValue ? TimeOnly.FromTimeSpan(SelectedTime.Value) : null,
+                    string.IsNullOrWhiteSpace(Location) ? null : Location);
+
+                System.Diagnostics.Debug.WriteLine($"[ScheduleFormViewModel.SaveAsync] Updating schedule {_editingScheduleId}");
+                await _apiClient.UpdateScheduleAsync(updateDto);
+                System.Diagnostics.Debug.WriteLine($"[ScheduleFormViewModel.SaveAsync] Schedule updated successfully");
+            }
+            else
+            {
+                // Create new schedule
+                var createDto = new CreateScheduleDto(
+                    Title,
+                    SelectedDate,
+                    SelectedCategory,
+                    string.IsNullOrWhiteSpace(Description) ? null : Description,
+                    SelectedTime.HasValue ? TimeOnly.FromTimeSpan(SelectedTime.Value) : null,
+                    string.IsNullOrWhiteSpace(Location) ? null : Location);
+
+                System.Diagnostics.Debug.WriteLine($"[ScheduleFormViewModel.SaveAsync] Creating new schedule: {Title} on {SelectedDate}");
+                var newScheduleId = await _apiClient.CreateScheduleAsync(createDto);
+                System.Diagnostics.Debug.WriteLine($"[ScheduleFormViewModel.SaveAsync] Schedule created successfully with ID: {newScheduleId}");
+            }
+
+            // Navigate back to calendar
+            System.Diagnostics.Debug.WriteLine($"[ScheduleFormViewModel.SaveAsync] Navigating back to calendar");
+            await Shell.Current.GoToAsync("..");
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = $"Failed to save schedule: {ex.Message}";
+            System.Diagnostics.Debug.WriteLine($"[ScheduleFormViewModel.SaveAsync] Error: {ex.Message}\nStack: {ex.StackTrace}");
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+
+    /// <summary>
+    /// Cancels the form and navigates back.
+    /// </summary>
+    [RelayCommand]
+    public async Task CancelAsync()
+    {
+        await Shell.Current.GoToAsync("..");
+    }
+
+    /// <summary>
+    /// Clears all form fields.
+    /// </summary>
+    private void Clear()
+    {
+        Title = string.Empty;
+        Description = string.Empty;
+        SelectedDate = DateOnly.FromDateTime(DateTime.Now);
+        SelectedTime = null;
+        Location = string.Empty;
+        SelectedCategory = "Personal";
+        ErrorMessage = string.Empty;
+    }
+}
