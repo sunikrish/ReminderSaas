@@ -29,7 +29,7 @@ public partial class ScheduleFormViewModel : ObservableObject
     private string location = string.Empty;
 
     [ObservableProperty]
-    private string selectedCategory = "Personal";
+    private string selectedCategory = "Other";
 
     [ObservableProperty]
     private bool isLoading;
@@ -103,9 +103,22 @@ public partial class ScheduleFormViewModel : ObservableObject
     {
         try
         {
+            // Validate required fields
             if (string.IsNullOrWhiteSpace(Title))
             {
                 ErrorMessage = "Title is required";
+                return;
+            }
+
+            if (string.IsNullOrWhiteSpace(SelectedCategory))
+            {
+                ErrorMessage = "Category is required";
+                return;
+            }
+
+            if (SelectedDate == default(DateOnly))
+            {
+                ErrorMessage = "Schedule date is required";
                 return;
             }
 
@@ -144,13 +157,18 @@ public partial class ScheduleFormViewModel : ObservableObject
                 System.Diagnostics.Debug.WriteLine($"[ScheduleFormViewModel.SaveAsync] Schedule created successfully with ID: {newScheduleId}");
             }
 
+            // Show success confirmation message
+            string message = _editingScheduleId.HasValue ? "Schedule updated successfully!" : "Schedule created successfully!";
+            await Application.Current!.MainPage!.DisplayAlert("Success", message, "OK");
+
             // Navigate back to calendar
             System.Diagnostics.Debug.WriteLine($"[ScheduleFormViewModel.SaveAsync] Navigating back to calendar");
-            await Shell.Current.GoToAsync("..");
+            await Shell.Current.GoToAsync("///calendar");
         }
         catch (Exception ex)
         {
             ErrorMessage = $"Failed to save schedule: {ex.Message}";
+            await Application.Current!.MainPage!.DisplayAlert("Error", $"Failed to save schedule: {ex.Message}", "OK");
             System.Diagnostics.Debug.WriteLine($"[ScheduleFormViewModel.SaveAsync] Error: {ex.Message}\nStack: {ex.StackTrace}");
         }
         finally
@@ -160,12 +178,21 @@ public partial class ScheduleFormViewModel : ObservableObject
     }
 
     /// <summary>
-    /// Cancels the form and navigates back.
+    /// Cancels the form and navigates back to calendar.
     /// </summary>
     [RelayCommand]
     public async Task CancelAsync()
     {
-        await Shell.Current.GoToAsync("..");
+        try
+        {
+            System.Diagnostics.Debug.WriteLine($"[ScheduleFormViewModel.CancelAsync] Navigating back to calendar");
+            await Shell.Current.GoToAsync("///calendar");
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[ScheduleFormViewModel.CancelAsync] Navigation error: {ex.Message}\nStack: {ex.StackTrace}");
+            await Application.Current!.MainPage!.DisplayAlert("Error", $"Navigation failed: {ex.Message}", "OK");
+        }
     }
 
     /// <summary>
@@ -178,7 +205,7 @@ public partial class ScheduleFormViewModel : ObservableObject
         SelectedDate = DateOnly.FromDateTime(DateTime.Now);
         SelectedTime = null;
         Location = string.Empty;
-        SelectedCategory = "Personal";
+        SelectedCategory = "Other";
         ErrorMessage = string.Empty;
     }
 }

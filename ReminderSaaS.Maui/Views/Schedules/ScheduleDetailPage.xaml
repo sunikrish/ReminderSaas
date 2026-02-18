@@ -14,14 +14,6 @@
               IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNullOrEmptyBoolConverter}}"
               Margin="0,10"/>
 
-        <!-- DEBUG: Show binding state -->
-        <VerticalStackLayout Padding="10" BackgroundColor="#FFE6E6" Spacing="3">
-            <Label Text="DEBUG INFO:" FontSize="12" FontAttributes="Bold" TextColor="Red"/>
-            <Label Text="{Binding Schedule, StringFormat='Schedule is null: {0}'}" FontSize="10" TextColor="Red"/>
-            <Label Text="{Binding IsLoading, StringFormat='IsLoading: {0}'}" FontSize="10" TextColor="Red"/>
-            <Label Text="{Binding Schedule.Title, StringFormat='Title bound: {0}'}" FontSize="10" TextColor="Red"/>
-        </VerticalStackLayout>
-
         <!-- Schedule Details -->
         <VerticalStackLayout IsVisible="{Binding Schedule, Converter={StaticResource NotNullToBoolConverter}}" Spacing="10">
             <!-- Title -->

@@ -392,7 +392,7 @@
         </member>
         <member name="M:ReminderSaaS.Maui.ViewModels.Schedules.ScheduleFormViewModel.CancelAsync">
             <summary>
-            Cancels the form and navigates back.
+            Cancels the form and navigates back to calendar.
             </summary>
         </member>
         <member name="M:ReminderSaaS.Maui.ViewModels.Schedules.ScheduleFormViewModel.Clear">

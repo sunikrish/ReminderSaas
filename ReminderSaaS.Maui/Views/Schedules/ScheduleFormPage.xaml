@@ -7,7 +7,10 @@
     <VerticalStackLayout Padding="20" Spacing="15">
         <!-- Title -->
         <VerticalStackLayout Spacing="5">
-            <Label Text="Title" FontAttributes="Bold"/>
+            <HorizontalStackLayout Spacing="3">
+                <Label Text="Title" FontAttributes="Bold"/>
+                <Label Text="*" FontAttributes="Bold" TextColor="Red"/>
+            </HorizontalStackLayout>
             <Entry x:Name="TitleEntry" 
                   Text="{Binding Title}"
                   Placeholder="Enter schedule title"
@@ -26,7 +29,10 @@
 
         <!-- Date -->
         <VerticalStackLayout Spacing="5">
-            <Label Text="Date" FontAttributes="Bold"/>
+            <HorizontalStackLayout Spacing="3">
+                <Label Text="Date" FontAttributes="Bold"/>
+                <Label Text="*" FontAttributes="Bold" TextColor="Red"/>
+            </HorizontalStackLayout>
             <DatePicker Date="{Binding SelectedDate, Converter={StaticResource DateOnlyConverter}}"/>
         </VerticalStackLayout>
 
@@ -47,7 +53,10 @@
 
         <!-- Category -->
         <VerticalStackLayout Spacing="5">
-            <Label Text="Category" FontAttributes="Bold"/>
+            <HorizontalStackLayout Spacing="3">
+                <Label Text="Category" FontAttributes="Bold"/>
+                <Label Text="*" FontAttributes="Bold" TextColor="Red"/>
+            </HorizontalStackLayout>
             <Picker ItemsSource="{Binding Categories}"
                    SelectedItem="{Binding SelectedCategory}"/>
         </VerticalStackLayout>

@@ -98,7 +98,8 @@ public partial class ScheduleDetailViewModel : ObservableObject
             await _apiClient.DeleteScheduleAsync(Schedule.Id);
 
             // Navigate back to calendar
-            await Shell.Current.GoToAsync("../..");
+            await Application.Current!.MainPage!.DisplayAlert("Success", "Schedule deleted successfully!", "OK");
+            await Shell.Current.GoToAsync("///calendar");
         }
         catch (Exception ex)
         {
@@ -117,7 +118,7 @@ public partial class ScheduleDetailViewModel : ObservableObject
     [RelayCommand]
     public async Task GoBackAsync()
     {
-        await Shell.Current.GoToAsync("..");
+        await Shell.Current.GoToAsync("///calendar");
     }
 
     /// <summary>

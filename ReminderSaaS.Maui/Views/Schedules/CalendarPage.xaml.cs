@@ -4,8 +4,6 @@ namespace ReminderSaaS.Maui.Views.Schedules;
 
 public partial class CalendarPage : ContentPage
 {
-    private bool _isInitialized = false;
-
     public CalendarPage(CalendarViewModel viewModel)
     {
         try
@@ -26,9 +24,10 @@ public partial class CalendarPage : ContentPage
         
         try
         {
-            if (!_isInitialized && BindingContext is CalendarViewModel viewModel)
+            // Always refresh the calendar when page appears (including after navigation back)
+            if (BindingContext is CalendarViewModel viewModel)
             {
-                _isInitialized = true;
+                System.Diagnostics.Debug.WriteLine($"[CalendarPage.OnAppearing] Refreshing calendar data");
                 await viewModel.InitializeCommand.ExecuteAsync(null);
             }
         }
