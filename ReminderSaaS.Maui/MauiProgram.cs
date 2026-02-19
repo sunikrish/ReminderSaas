@@ -1,7 +1,10 @@
 ﻿using Microsoft.Extensions.Logging;
 using ReminderSaaS.Maui.Services;
+using ReminderSaaS.Maui.ViewModels;
 using ReminderSaaS.Maui.ViewModels.Schedules;
 using ReminderSaaS.Maui.Views.Schedules;
+using ReminderSaaS.Maui.ViewModels.Documents;
+using ReminderSaaS.Maui.Views.Documents;
 
 namespace ReminderSaaS.Maui;
 
@@ -16,6 +19,7 @@ public static class MauiProgram
 			{
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
 				fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
+				fonts.AddFont("fa-solid-900.ttf", "FontAwesome");
 			});
 
 		// Register HttpClient for Schedule API
@@ -28,15 +32,23 @@ public static class MauiProgram
 		builder.Services.AddSingleton(new HttpClient { BaseAddress = new Uri(baseUrl) });
 		builder.Services.AddSingleton<IScheduleApiClient>(sp => new ScheduleApiClient(sp.GetRequiredService<HttpClient>()));
 
+		// Register Document Scan Service
+		builder.Services.AddSingleton<IDocumentScanService>(sp => new DocumentScanService(sp.GetRequiredService<HttpClient>()));
+
+		// Register Shell ViewModels
+		builder.Services.AddSingleton<MainShellViewModel>();
+
 		// Register ViewModels
 		builder.Services.AddSingleton<CalendarViewModel>();
 		builder.Services.AddTransient<ScheduleFormViewModel>(); // Transient to get fresh state for each edit
 		builder.Services.AddTransient<ScheduleDetailViewModel>(); // Transient to get fresh state for each schedule
+		builder.Services.AddTransient<DocumentScanViewModel>(); // Transient for document scanning
 
 		// Register Views
 		builder.Services.AddSingleton<CalendarPage>();
 		builder.Services.AddTransient<ScheduleFormPage>(); // Transient to work with fresh ViewModel
 		builder.Services.AddTransient<ScheduleDetailPage>(); // Transient to work with fresh ViewModel
+		builder.Services.AddTransient<DocumentScanResultPage>(); // Transient for document scan results
 
 #if DEBUG
 		builder.Logging.AddDebug();

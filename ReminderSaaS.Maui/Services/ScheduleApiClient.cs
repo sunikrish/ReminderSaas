@@ -36,25 +36,17 @@ public class ScheduleApiClient : IScheduleApiClient
     {
         try
         {
-            System.Diagnostics.Debug.WriteLine($"[ScheduleApiClient] Requesting schedules for {year}-{month:D2}");
             var response = await _httpClient.GetAsync($"/api/schedules?year={year}&month={month}");
             
-            System.Diagnostics.Debug.WriteLine($"[ScheduleApiClient] Response status: {response.StatusCode}");
             response.EnsureSuccessStatusCode();
 
             var schedules = await response.Content.ReadFromJsonAsync<List<ScheduleDto>>(JsonOptions) ?? new();
-            System.Diagnostics.Debug.WriteLine($"[ScheduleApiClient] Successfully retrieved {schedules.Count} schedules");
-            
-            foreach (var schedule in schedules)
-            {
-                System.Diagnostics.Debug.WriteLine($"[ScheduleApiClient]   - {schedule.Title} on {schedule.Date}");
-            }
             
             return schedules;
         }
         catch (HttpRequestException ex)
         {
-            System.Diagnostics.Debug.WriteLine($"[ScheduleApiClient] Error getting schedules (HTTP): {ex.Message}\nInner: {ex.InnerException?.Message}");
+            System.Diagnostics.Debug.WriteLine($"[ScheduleApiClient] Error getting schedules (HTTP): {ex.Message}");
             return new(); // Return empty list on network error
         }
         catch (TaskCanceledException ex)
@@ -64,7 +56,7 @@ public class ScheduleApiClient : IScheduleApiClient
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"[ScheduleApiClient] Error getting schedules: {ex.Message}\nStack: {ex.StackTrace}");
+            System.Diagnostics.Debug.WriteLine($"[ScheduleApiClient] Error getting schedules: {ex.Message}");
             return new(); // Return empty list on other errors
         }
     }
@@ -76,39 +68,22 @@ public class ScheduleApiClient : IScheduleApiClient
     {
         try
         {
-            System.Diagnostics.Debug.WriteLine($"[ScheduleApiClient] Requesting schedule by ID: {id}");
-            System.Diagnostics.Debug.WriteLine($"[ScheduleApiClient] Full URL: {_httpClient.BaseAddress}/api/schedules/{id}");
-            
             var response = await _httpClient.GetAsync($"/api/schedules/{id}");
-            
-            System.Diagnostics.Debug.WriteLine($"[ScheduleApiClient] Response status for ID {id}: {response.StatusCode}");
             
             if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
             {
-                System.Diagnostics.Debug.WriteLine($"[ScheduleApiClient] Schedule not found: {id}");
                 return null;
             }
 
             response.EnsureSuccessStatusCode();
-            var responseContent = await response.Content.ReadAsStringAsync();
-            System.Diagnostics.Debug.WriteLine($"[ScheduleApiClient] Response content: {responseContent}");
             
             var schedule = await response.Content.ReadFromJsonAsync<ScheduleDto>(JsonOptions);
-            
-            if (schedule != null)
-            {
-                System.Diagnostics.Debug.WriteLine($"[ScheduleApiClient] Successfully retrieved schedule: {schedule.Title} ({schedule.Id})");
-            }
-            else
-            {
-                System.Diagnostics.Debug.WriteLine($"[ScheduleApiClient] Schedule returned null for ID: {id}");
-            }
             
             return schedule;
         }
         catch (HttpRequestException ex)
         {
-            System.Diagnostics.Debug.WriteLine($"[ScheduleApiClient] Error getting schedule (HTTP): {ex.Message}\nInner: {ex.InnerException?.Message}");
+            System.Diagnostics.Debug.WriteLine($"[ScheduleApiClient] Error getting schedule (HTTP): {ex.Message}");
             return null;
         }
         catch (TaskCanceledException ex)
@@ -118,7 +93,7 @@ public class ScheduleApiClient : IScheduleApiClient
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"[ScheduleApiClient] Error getting schedule: {ex.Message}\nStack: {ex.StackTrace}");
+            System.Diagnostics.Debug.WriteLine($"[ScheduleApiClient] Error getting schedule: {ex.Message}");
             return null;
         }
     }

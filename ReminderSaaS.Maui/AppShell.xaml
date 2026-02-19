@@ -5,27 +5,52 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
     xmlns:local="clr-namespace:ReminderSaaS.Maui"
     xmlns:schedules="clr-namespace:ReminderSaaS.Maui.Views.Schedules"
-    Title="ReminderSaaS.Maui">
+    xmlns:documents="clr-namespace:ReminderSaaS.Maui.Views.Documents"
+    Title="ReminderSaaS.Maui"
+    FlyoutBehavior="Flyout">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    <Shell.FlyoutHeader>
+        <Grid Padding="20" RowSpacing="10" BackgroundColor="{AppThemeBinding Light=#512BD4, Dark=#2B0B98}">
+            <Label 
+                Text="ReminderSaaS" 
+                FontSize="24" 
+                FontAttributes="Bold" 
+                TextColor="White" />
+        </Grid>
+    </Shell.FlyoutHeader>
 
-    <!-- Schedule Routes -->
-    <ShellContent
-        Title="Calendar"
-        ContentTemplate="{DataTemplate schedules:CalendarPage}"
-        Route="calendar" />
+    <!-- Left Menu Navigation -->
+    <FlyoutItem Title="Home" Icon="{FontImage Glyph=🏠, Color={AppThemeBinding Light=#512BD4, Dark=#ac99ea}, Size=24}">
+        <ShellContent
+            Title="Home"
+            ContentTemplate="{DataTemplate local:MainPage}"
+            Route="MainPage" />
+    </FlyoutItem>
 
+    <FlyoutItem Title="Calendar" Icon="{FontImage Glyph=📅, Color={AppThemeBinding Light=#512BD4, Dark=#ac99ea}, Size=24}">
+        <ShellContent
+            Title="Calendar"
+            ContentTemplate="{DataTemplate schedules:CalendarPage}"
+            Route="calendar" />
+    </FlyoutItem>
+
+    <!-- Additional Routes (hidden from menu) -->
     <ShellContent
         Title="Schedule Form"
         ContentTemplate="{DataTemplate schedules:ScheduleFormPage}"
-        Route="scheduleform" />
+        Route="scheduleform"
+        IsVisible="False" />
 
     <ShellContent
         Title="Schedule Detail"
         ContentTemplate="{DataTemplate schedules:ScheduleDetailPage}"
-        Route="scheduledetail" />
+        Route="scheduledetail"
+        IsVisible="False" />
+
+    <ShellContent
+        Title="Document Scan"
+        ContentTemplate="{DataTemplate documents:DocumentScanResultPage}"
+        Route="documentscan"
+        IsVisible="False" />
 
 </Shell>

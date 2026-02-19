@@ -24,7 +24,6 @@ public partial class ScheduleDetailViewModel : ObservableObject
     public ScheduleDetailViewModel(IScheduleApiClient apiClient)
     {
         _apiClient = apiClient;
-        System.Diagnostics.Debug.WriteLine($"[ScheduleDetailViewModel.ctor] ViewModel created");
     }
 
     /// <summary>
@@ -35,7 +34,6 @@ public partial class ScheduleDetailViewModel : ObservableObject
     {
         try
         {
-            System.Diagnostics.Debug.WriteLine($"[ScheduleDetailViewModel] LoadScheduleAsync called with ID: {scheduleId}");
             IsLoading = true;
             ErrorMessage = string.Empty;
 
@@ -44,11 +42,6 @@ public partial class ScheduleDetailViewModel : ObservableObject
             if (Schedule == null)
             {
                 ErrorMessage = "Schedule not found";
-                System.Diagnostics.Debug.WriteLine($"[ScheduleDetailViewModel] Schedule not found for ID: {scheduleId}");
-            }
-            else
-            {
-                System.Diagnostics.Debug.WriteLine($"[ScheduleDetailViewModel] Schedule loaded: {Schedule.Title} ({Schedule.Id})");
             }
         }
         catch (Exception ex)
@@ -70,7 +63,7 @@ public partial class ScheduleDetailViewModel : ObservableObject
     {
         if (Schedule != null)
         {
-            await Shell.Current.GoToAsync($"///scheduleform?id={Schedule.Id}");
+            await Shell.Current.GoToAsync($"scheduleform?id={Schedule.Id}");
         }
     }
 
@@ -99,7 +92,7 @@ public partial class ScheduleDetailViewModel : ObservableObject
 
             // Navigate back to calendar
             await Application.Current!.MainPage!.DisplayAlert("Success", "Schedule deleted successfully!", "OK");
-            await Shell.Current.GoToAsync("///calendar");
+            await Shell.Current.GoToAsync("calendar");
         }
         catch (Exception ex)
         {
@@ -118,7 +111,7 @@ public partial class ScheduleDetailViewModel : ObservableObject
     [RelayCommand]
     public async Task GoBackAsync()
     {
-        await Shell.Current.GoToAsync("///calendar");
+        await Shell.Current.GoToAsync("calendar");
     }
 
     /// <summary>

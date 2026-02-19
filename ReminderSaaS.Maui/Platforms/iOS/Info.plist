@@ -28,5 +28,9 @@
 	</array>
 	<key>XSAppIconAssets</key>
 	<string>Assets.xcassets/appicon.appiconset</string>
+	<key>NSCameraUsageDescription</key>
+	<string>We need camera access to scan and analyze documents</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>We need access to your photo library to import documents</string>
 </dict>
 </plist>

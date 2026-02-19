@@ -16,6 +16,8 @@
             <converters:BoolToColorConverter x:Key="BoolToColorConverter" />
             <converters:NotNullToBoolConverter x:Key="NotNullToBoolConverter" />
             <converters:DateOnlyConverter x:Key="DateOnlyConverter" />
+            <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            <converters:IsNotNullOrEmptyConverter x:Key="IsNotNullOrEmptyConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>

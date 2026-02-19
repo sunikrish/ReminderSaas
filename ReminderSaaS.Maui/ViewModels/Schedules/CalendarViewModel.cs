@@ -53,28 +53,23 @@ public partial class CalendarDayCell : ObservableObject
     /// </summary>
     public void UpdateColors()
     {
-        System.Diagnostics.Debug.WriteLine($"[UpdateColors] Day: {DayNumber}, IsToday: {IsToday}, HasSchedules: {HasSchedules}");
-        
         if (IsToday)
         {
             BorderColor = Color.FromArgb("#FF6B6B");      // Red for today
             BackgroundColor = Color.FromArgb("#FFE5E5");  // Light red for today
             TextColor = Color.FromArgb("#FF6B6B");        // Red text for today
-            System.Diagnostics.Debug.WriteLine($"[UpdateColors] Day {DayNumber}: Set to TODAY colors (red)");
         }
         else if (HasSchedules)
         {
             BorderColor = Color.FromArgb("#4CAF50");      // Green for events
             BackgroundColor = Color.FromArgb("#E8F5E9");  // Light green for events
             TextColor = Color.FromArgb("#2E7D32");        // Dark green text for events
-            System.Diagnostics.Debug.WriteLine($"[UpdateColors] Day {DayNumber}: Set to EVENT colors (green)");
         }
         else
         {
             BorderColor = Color.FromArgb("#E0E0E0");      // Gray default
             BackgroundColor = Color.FromArgb("#FFFFFF");  // White default
             TextColor = Color.FromArgb("#000000");        // Black default
-            System.Diagnostics.Debug.WriteLine($"[UpdateColors] Day {DayNumber}: Set to DEFAULT colors");
         }
     }
 
@@ -175,23 +170,18 @@ public partial class CalendarViewModel : ObservableObject
     {
         try
         {
-            System.Diagnostics.Debug.WriteLine($"\n[InitializeAsync] Starting calendar initialization for {CurrentYear}-{CurrentMonth}");
-            
             IsLoading = true;
             ErrorMessage = string.Empty;
 
             // CRITICAL: Load schedules FIRST, which will also call GenerateDaysInMonth
             // This ensures _allSchedules is populated BEFORE calendar day cells are created
-            System.Diagnostics.Debug.WriteLine($"[InitializeAsync] Loading schedules and generating calendar...");
             await LoadSchedulesForMonthAsync();
             // LoadSchedulesForMonthAsync calls GenerateDaysInMonth internally
-            
-            System.Diagnostics.Debug.WriteLine($"[InitializeAsync] Complete: Calendar initialized with {_allSchedules.Count} date(s) having events\n");
         }
         catch (Exception ex)
         {
             ErrorMessage = "Failed to initialize calendar";
-            System.Diagnostics.Debug.WriteLine($"[InitializeAsync] Calendar initialization error: {ex.Message}\nStack: {ex.StackTrace}");
+            System.Diagnostics.Debug.WriteLine($"[InitializeAsync] Calendar initialization error: {ex.Message}");
         }
         finally
         {
@@ -276,7 +266,7 @@ public partial class CalendarViewModel : ObservableObject
     [RelayCommand]
     public async Task CreateScheduleAsync()
     {
-        await Shell.Current.GoToAsync($"///scheduleform?date={SelectedDate:yyyy-MM-dd}");
+        await Shell.Current.GoToAsync($"scheduleform?date={SelectedDate:yyyy-MM-dd}");
     }
 
     /// <summary>
@@ -285,25 +275,19 @@ public partial class CalendarViewModel : ObservableObject
     [RelayCommand]
     public async Task EditScheduleAsync(ScheduleDto schedule)
     {
-        System.Diagnostics.Debug.WriteLine($"[CalendarViewModel.EditScheduleAsync] Called with schedule ID: {schedule?.Id}");
-        System.Diagnostics.Debug.WriteLine($"[CalendarViewModel.EditScheduleAsync] Schedule title: {schedule?.Title}");
-        
         if (schedule == null)
         {
-            System.Diagnostics.Debug.WriteLine($"[CalendarViewModel.EditScheduleAsync] Schedule is null, cannot navigate");
             return;
         }
 
         try
         {
             var navigationUri = $"///scheduledetail?scheduleid={schedule.Id}";
-            System.Diagnostics.Debug.WriteLine($"[CalendarViewModel.EditScheduleAsync] Navigating to: {navigationUri}");
             await Shell.Current.GoToAsync(navigationUri);
-            System.Diagnostics.Debug.WriteLine($"[CalendarViewModel.EditScheduleAsync] Navigation completed");
         }
         catch (Exception ex)
         {
-            System.Diagnostics.Debug.WriteLine($"[CalendarViewModel.EditScheduleAsync] Navigation error: {ex.Message}\nStack: {ex.StackTrace}");
+            System.Diagnostics.Debug.WriteLine($"[CalendarViewModel.EditScheduleAsync] Navigation error: {ex.Message}");
         }
     }
 
@@ -349,47 +333,29 @@ public partial class CalendarViewModel : ObservableObject
             IsLoading = true;
             ErrorMessage = string.Empty;
 
-            System.Diagnostics.Debug.WriteLine($"\n[CalendarViewModel] ========== LOADING SCHEDULES FOR {CurrentYear}-{CurrentMonth} ==========");
-            
             var schedules = await _apiClient.GetSchedulesByMonthAsync(CurrentYear, CurrentMonth);
-            
-            System.Diagnostics.Debug.WriteLine($"[CalendarViewModel] API returned: {schedules?.Count ?? 0} schedules");
             
             _allSchedules.Clear();
             if (schedules != null && schedules.Count > 0)
             {
                 foreach (var schedule in schedules)
                 {
-                    System.Diagnostics.Debug.WriteLine($"[CalendarViewModel] Processing: '{schedule.Title}' on {schedule.Date}");
                     if (!_allSchedules.ContainsKey(schedule.Date))
                     {
                         _allSchedules[schedule.Date] = new List<ScheduleDto>();
                     }
                     _allSchedules[schedule.Date].Add(schedule);
                 }
-                
-                System.Diagnostics.Debug.WriteLine($"[CalendarViewModel] ==== SCHEDULE SUMMARY ====");
-                foreach (var kvp in _allSchedules.OrderBy(x => x.Key))
-                {
-                    System.Diagnostics.Debug.WriteLine($"[CalendarViewModel] {kvp.Key}: {kvp.Value.Count} event(s) - {string.Join(", ", kvp.Value.Select(s => s.Title))}");
-                }
-                System.Diagnostics.Debug.WriteLine($"[CalendarViewModel] Total dates with events: {_allSchedules.Count}");
-            }
-            else
-            {
-                System.Diagnostics.Debug.WriteLine($"[CalendarViewModel] No schedules returned from API");
             }
             
-            System.Diagnostics.Debug.WriteLine($"[CalendarViewModel] About to generate calendar for {CurrentYear}-{CurrentMonth}...");
             // Regenerate calendar with updated schedules
             GenerateDaysInMonth(CurrentYear, CurrentMonth);
             FilterSchedulesForSelectedDate();
-            System.Diagnostics.Debug.WriteLine($"[CalendarViewModel] ========== LOADING COMPLETE ==========\n");
         }
         catch (Exception ex)
         {
             ErrorMessage = "Failed to load schedules";
-            System.Diagnostics.Debug.WriteLine($"[CalendarViewModel] Load schedules error: {ex.Message}\nStack: {ex.StackTrace}");
+            System.Diagnostics.Debug.WriteLine($"[CalendarViewModel] Load schedules error: {ex.Message}");
         }
         finally
         {

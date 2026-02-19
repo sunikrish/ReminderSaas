@@ -29,7 +29,7 @@ public partial class ScheduleFormViewModel : ObservableObject
     private string location = string.Empty;
 
     [ObservableProperty]
-    private string selectedCategory = "Other";
+    private string selectedCategory = "Personal";
 
     [ObservableProperty]
     private bool isLoading;
@@ -37,7 +37,7 @@ public partial class ScheduleFormViewModel : ObservableObject
     [ObservableProperty]
     private string errorMessage = string.Empty;
 
-    private readonly string[] _categories = { "Health", "Tax", "School", "Personal", "Other" };
+    private readonly string[] _categories = { "Government", "Kids School", "Personal", "Health", "Car", "Finance" };
 
     public IReadOnlyList<string> Categories => _categories;
 
@@ -137,9 +137,7 @@ public partial class ScheduleFormViewModel : ObservableObject
                     SelectedTime.HasValue ? TimeOnly.FromTimeSpan(SelectedTime.Value) : null,
                     string.IsNullOrWhiteSpace(Location) ? null : Location);
 
-                System.Diagnostics.Debug.WriteLine($"[ScheduleFormViewModel.SaveAsync] Updating schedule {_editingScheduleId}");
                 await _apiClient.UpdateScheduleAsync(updateDto);
-                System.Diagnostics.Debug.WriteLine($"[ScheduleFormViewModel.SaveAsync] Schedule updated successfully");
             }
             else
             {
@@ -152,9 +150,7 @@ public partial class ScheduleFormViewModel : ObservableObject
                     SelectedTime.HasValue ? TimeOnly.FromTimeSpan(SelectedTime.Value) : null,
                     string.IsNullOrWhiteSpace(Location) ? null : Location);
 
-                System.Diagnostics.Debug.WriteLine($"[ScheduleFormViewModel.SaveAsync] Creating new schedule: {Title} on {SelectedDate}");
                 var newScheduleId = await _apiClient.CreateScheduleAsync(createDto);
-                System.Diagnostics.Debug.WriteLine($"[ScheduleFormViewModel.SaveAsync] Schedule created successfully with ID: {newScheduleId}");
             }
 
             // Show success confirmation message
@@ -162,8 +158,7 @@ public partial class ScheduleFormViewModel : ObservableObject
             await Application.Current!.MainPage!.DisplayAlert("Success", message, "OK");
 
             // Navigate back to calendar
-            System.Diagnostics.Debug.WriteLine($"[ScheduleFormViewModel.SaveAsync] Navigating back to calendar");
-            await Shell.Current.GoToAsync("///calendar");
+            await Shell.Current.GoToAsync("calendar");
         }
         catch (Exception ex)
         {
@@ -185,8 +180,7 @@ public partial class ScheduleFormViewModel : ObservableObject
     {
         try
         {
-            System.Diagnostics.Debug.WriteLine($"[ScheduleFormViewModel.CancelAsync] Navigating back to calendar");
-            await Shell.Current.GoToAsync("///calendar");
+            await Shell.Current.GoToAsync("calendar");
         }
         catch (Exception ex)
         {
@@ -205,7 +199,7 @@ public partial class ScheduleFormViewModel : ObservableObject
         SelectedDate = DateOnly.FromDateTime(DateTime.Now);
         SelectedTime = null;
         Location = string.Empty;
-        SelectedCategory = "Other";
+        SelectedCategory = "Personal";
         ErrorMessage = string.Empty;
     }
 }
