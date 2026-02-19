@@ -1,0 +1,11 @@
+/Applications/Repos/ReminderSaas-main/Domain/bin/Debug/net10.0/ReminderSaaS.Domain.deps.json
+/Applications/Repos/ReminderSaas-main/Domain/bin/Debug/net10.0/ReminderSaaS.Domain.dll
+/Applications/Repos/ReminderSaas-main/Domain/bin/Debug/net10.0/ReminderSaaS.Domain.pdb
+/Applications/Repos/ReminderSaas-main/Domain/obj/Debug/net10.0/ReminderSaaS.Domain.GeneratedMSBuildEditorConfig.editorconfig
+/Applications/Repos/ReminderSaas-main/Domain/obj/Debug/net10.0/ReminderSaaS.Domain.AssemblyInfoInputs.cache
+/Applications/Repos/ReminderSaas-main/Domain/obj/Debug/net10.0/ReminderSaaS.Domain.AssemblyInfo.cs
+/Applications/Repos/ReminderSaas-main/Domain/obj/Debug/net10.0/ReminderSaaS.Domain.csproj.CoreCompileInputs.cache
+/Applications/Repos/ReminderSaas-main/Domain/obj/Debug/net10.0/ReminderSaaS.Domain.dll
+/Applications/Repos/ReminderSaas-main/Domain/obj/Debug/net10.0/refint/ReminderSaaS.Domain.dll
+/Applications/Repos/ReminderSaas-main/Domain/obj/Debug/net10.0/ReminderSaaS.Domain.pdb
+/Applications/Repos/ReminderSaas-main/Domain/obj/Debug/net10.0/ref/ReminderSaaS.Domain.dll
