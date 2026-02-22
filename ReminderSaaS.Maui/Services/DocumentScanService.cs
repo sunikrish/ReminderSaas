@@ -1,13 +1,16 @@
 using System.Diagnostics;
 using System.Text.Json;
+using System.Net.Http.Headers;
+using Microsoft.Maui.Devices;
+using Microsoft.Maui.ApplicationModel;
+using Microsoft.Maui.Controls;
 
 namespace ReminderSaaS.Maui.Services;
 
 public class DocumentScanService : IDocumentScanService
 {
     private readonly HttpClient _httpClient;
-    private const string ScanEndpoint = "http://localhost:7071/api/scan-document";
-    private const string ScanEndpointAndroid = "http://10.0.2.2:7071/api/scan-document";
+    private const string RelativeScanPath = "api/scan-document";
 
     public DocumentScanService(HttpClient httpClient)
     {
@@ -18,8 +21,27 @@ public class DocumentScanService : IDocumentScanService
     {
         try
         {
-            var status = await MediaPicker.CapturePhotoAsync();
-            return status != null;
+            // Rely on the platform API to indicate capture support.
+            bool captureSupported = false;
+            try
+            {
+                captureSupported = MediaPicker.Default.IsCaptureSupported;
+            }
+            catch
+            {
+                captureSupported = false;
+            }
+
+            if (!captureSupported)
+                return false;
+
+            var status = await Permissions.CheckStatusAsync<Permissions.Camera>();
+            if (status == PermissionStatus.Granted)
+                return true;
+
+            // Try requesting permission (only prompts on physical devices)
+            status = await Permissions.RequestAsync<Permissions.Camera>();
+            return status == PermissionStatus.Granted;
         }
         catch (Exception ex)
         {
@@ -33,20 +55,108 @@ public class DocumentScanService : IDocumentScanService
         try
         {
             // Request camera permission
-            var cameraStatus = await Permissions.CheckStatusAsync<Permissions.Camera>();
-            if (cameraStatus != PermissionStatus.Granted)
+            // Check whether capture is supported on this device (simulator often doesn't support)
+            bool captureSupported = true;
+            try
             {
-                cameraStatus = await Permissions.RequestAsync<Permissions.Camera>();
+                captureSupported = MediaPicker.Default.IsCaptureSupported;
+            }
+            catch
+            {
+                captureSupported = false;
             }
 
-            if (cameraStatus != PermissionStatus.Granted)
+            FileResult? photo = null;
+
+            // If capture is not supported (common on iOS simulator), force the photo picker
+            if (DeviceInfo.Platform == DevicePlatform.iOS && !captureSupported)
             {
-                Debug.WriteLine("Camera permission denied");
-                return null;
+                try
+                {
+                    // Inform the user on simulator that camera isn't available and we'll open the photo picker
+                    try
+                    {
+                        if (Application.Current?.MainPage != null)
+                        {
+                            await Application.Current.MainPage.DisplayAlert(
+                                "Simulator Notice",
+                                "The iOS simulator doesn't support the camera. Opening the photo picker instead.",
+                                "OK");
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Alert display failed: {ex.Message}");
+                    }
+
+                    photo = await MediaPicker.PickPhotoAsync();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Photo pick (simulator forced) error: {ex.Message}");
+                    return null;
+                }
+            }
+            else if (captureSupported)
+            {
+                // Request camera permission
+                var cameraStatus = await Permissions.CheckStatusAsync<Permissions.Camera>();
+                if (cameraStatus != PermissionStatus.Granted)
+                {
+                    cameraStatus = await Permissions.RequestAsync<Permissions.Camera>();
+                }
+
+                if (cameraStatus != PermissionStatus.Granted)
+                {
+                    Debug.WriteLine("Camera permission denied");
+                    // Fall back to picking a photo from library
+                    try
+                    {
+                        photo = await MediaPicker.PickPhotoAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Photo pick fallback error: {ex.Message}");
+                        return null;
+                    }
+                }
+                else
+                {
+                    // Capture photo
+                    try
+                    {
+                        photo = await MediaPicker.CapturePhotoAsync();
+                    }
+                    catch (Exception ex)
+                    {
+                        Debug.WriteLine($"Capture photo error: {ex.Message}");
+                        // On failure (e.g., simulator), fall back to picking a photo
+                        try
+                        {
+                            photo = await MediaPicker.PickPhotoAsync();
+                        }
+                        catch (Exception pickEx)
+                        {
+                            Debug.WriteLine($"Photo pick fallback error: {pickEx.Message}");
+                            return null;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // Simulator/device doesn't support capture; ask user to pick a photo
+                try
+                {
+                    photo = await MediaPicker.PickPhotoAsync();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Photo pick (no-capture) error: {ex.Message}");
+                    return null;
+                }
             }
 
-            // Capture photo
-            var photo = await MediaPicker.CapturePhotoAsync();
             if (photo == null)
                 return null;
 
@@ -59,17 +169,26 @@ public class DocumentScanService : IDocumentScanService
                 imageData = ms.ToArray();
             }
 
-            // Send to backend
-            var endpoint = DeviceInfo.Platform == DevicePlatform.Android 
-                ? ScanEndpointAndroid 
-                : ScanEndpoint;
+            // Log configured backend base address and send to backend
+            Debug.WriteLine($"Configured HttpClient.BaseAddress: {_httpClient.BaseAddress}");
+            // Send to backend - use injected HttpClient.BaseAddress if available
+            Uri requestUri;
+            if (_httpClient.BaseAddress != null)
+            {
+                requestUri = new Uri(_httpClient.BaseAddress, RelativeScanPath);
+            }
+            else
+            {
+                throw new InvalidOperationException("HttpClient.BaseAddress is not configured. Set the HttpClient BaseAddress to your backend URL (e.g. http://<machine-ip>:7147).\n" +
+                                                    "For Android emulator use http://10.0.2.2:<port> or configure a reachable host address.");
+            }
 
             var content = new ByteArrayContent(imageData);
-            content.Headers.ContentType = new System.Net.Http.Headers.MediaTypeHeaderValue("image/jpeg");
+            content.Headers.ContentType = new MediaTypeHeaderValue("image/jpeg");
 
-            Debug.WriteLine($"Sending image to {endpoint}, size: {imageData.Length} bytes");
+            Debug.WriteLine($"Sending image to {requestUri}, size: {imageData.Length} bytes");
 
-            var response = await _httpClient.PostAsync(endpoint, content);
+            var response = await _httpClient.PostAsync(requestUri, content);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -80,26 +199,36 @@ public class DocumentScanService : IDocumentScanService
             var json = await response.Content.ReadAsStringAsync();
             Debug.WriteLine($"Backend response: {json}");
 
-            var result = JsonSerializer.Deserialize<BackendResponse>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
+            var result = JsonSerializer.Deserialize<BackendResponse?>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             if (result == null)
                 return null;
+
+            AppointmentData? appointment = null;
+            if (result.Appointment != null)
+            {
+                DateOnly parsedDate;
+                TimeOnly parsedTime;
+                DateOnly.TryParseExact(result.Appointment.Date, "yyyy-MM-dd", out parsedDate);
+                TimeOnly? time = null;
+                if (!string.IsNullOrEmpty(result.Appointment.Time) && TimeOnly.TryParseExact(result.Appointment.Time, "HH:mm", out parsedTime))
+                    time = parsedTime;
+
+                appointment = new AppointmentData
+                {
+                    Title = result.Appointment.Title,
+                    Date = parsedDate,
+                    Time = time,
+                    Location = result.Appointment.Location,
+                    Category = result.Appointment.Category
+                };
+            }
 
             return new DocumentScanResult
             {
                 DetectedLanguage = result.DetectedLanguage,
                 Summary = result.Summary,
                 ContainsAppointment = result.ContainsAppointment,
-                Appointment = result.Appointment != null ? new AppointmentData
-                {
-                    Title = result.Appointment.Title,
-                    Date = DateOnly.ParseExact(result.Appointment.Date, "yyyy-MM-dd"),
-                    Time = string.IsNullOrEmpty(result.Appointment.Time) 
-                        ? null 
-                        : TimeOnly.ParseExact(result.Appointment.Time, "HH:mm"),
-                    Location = result.Appointment.Location,
-                    Category = result.Appointment.Category
-                } : null
+                Appointment = appointment
             };
         }
         catch (Exception ex)

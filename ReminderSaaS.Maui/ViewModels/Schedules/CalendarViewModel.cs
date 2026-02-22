@@ -1,3 +1,4 @@
+using System;
 using System.Collections.ObjectModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
@@ -117,6 +118,8 @@ public class CalendarWeek
 public partial class CalendarViewModel : ObservableObject
 {
     private readonly IScheduleApiClient _apiClient;
+    private readonly IDocumentScanService _documentScanService;
+    private readonly IServiceProvider _services;
     private Dictionary<DateOnly, List<ScheduleDto>> _allSchedules = new();
 
     [ObservableProperty]
@@ -146,9 +149,11 @@ public partial class CalendarViewModel : ObservableObject
     [ObservableProperty]
     private string monthYearDisplay = string.Empty;
 
-    public CalendarViewModel(IScheduleApiClient apiClient)
+    public CalendarViewModel(IScheduleApiClient apiClient, IDocumentScanService documentScanService, IServiceProvider services)
     {
         _apiClient = apiClient;
+        _documentScanService = documentScanService;
+        _services = services;
         var today = DateOnly.FromDateTime(DateTime.Now);
         CurrentYear = today.Year;
         CurrentMonth = today.Month;
@@ -267,6 +272,65 @@ public partial class CalendarViewModel : ObservableObject
     public async Task CreateScheduleAsync()
     {
         await Shell.Current.GoToAsync($"scheduleform?date={SelectedDate:yyyy-MM-dd}");
+    }
+
+    /// <summary>
+    /// Opens the document scanner/modal.
+    /// </summary>
+    [RelayCommand]
+    public async Task CameraAsync()
+    {
+        try
+        {
+            // Capture first (do not navigate away) and then show results modally
+            var result = await _documentScanService.CaptureAndAnalyzeAsync();
+            if (result == null)
+            {
+                await Shell.Current.DisplayAlert("Scan", "No document captured or analysis failed.", "OK");
+                return;
+            }
+
+            // Resolve a transient DocumentScanResultPage and set its ViewModel properties
+            var page = _services.GetService(typeof(ReminderSaaS.Maui.Views.Documents.DocumentScanResultPage)) as ReminderSaaS.Maui.Views.Documents.DocumentScanResultPage;
+            if (page == null)
+            {
+                await Shell.Current.DisplayAlert("Error", "Unable to show scan result page.", "OK");
+                return;
+            }
+
+            if (page.BindingContext is ReminderSaaS.Maui.ViewModels.Documents.DocumentScanViewModel vm)
+            {
+                vm.Summary = result.Summary ?? string.Empty;
+                vm.ContainsAppointment = result.ContainsAppointment;
+                if (result.ContainsAppointment && result.Appointment != null)
+                {
+                    vm.AppointmentTitle = result.Appointment.Title ?? string.Empty;
+                    vm.AppointmentDate = result.Appointment.Date;
+                    vm.AppointmentTime = result.Appointment.Time;
+                    vm.AppointmentLocation = result.Appointment.Location ?? string.Empty;
+                    vm.AppointmentCategory = result.Appointment.Category ?? "Personal";
+                }
+                vm.ShowResult = true;
+            }
+
+            // Present modally so user stays in context
+            await Shell.Current.Navigation.PushModalAsync(page);
+        }
+        catch (Exception ex)
+        {
+            System.Diagnostics.Debug.WriteLine($"[CameraAsync] Error: {ex.Message}");
+            await Shell.Current.DisplayAlert("Error", "Unable to perform document scan.", "OK");
+        }
+    }
+
+    /// <summary>
+    /// Placeholder for speaker/voice action.
+    /// </summary>
+    [RelayCommand]
+    public async Task SpeakerAsync()
+    {
+        // For now show a simple message. This can be expanded to TTS/STT integration.
+        await Shell.Current.DisplayAlertAsync("Voice", "Voice actions are not implemented yet.", "OK");
     }
 
     /// <summary>

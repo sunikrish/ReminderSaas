@@ -3,6 +3,7 @@ using CommunityToolkit.Mvvm.Input;
 using ReminderSaaS.Maui.Services;
 using ReminderSaaS.Shared.Contracts.Schedules;
 using System.Diagnostics;
+using Microsoft.Maui.ApplicationModel;
 
 namespace ReminderSaaS.Maui.ViewModels.Documents;
 
@@ -129,8 +130,26 @@ public partial class DocumentScanViewModel : ObservableObject
                 $"Appointment '{AppointmentTitle}' added to your calendar!",
                 "OK");
 
-            // Navigate back to calendar
-            await Shell.Current.GoToAsync("calendar");
+            // Try to close modal or navigate back to calendar
+            try
+            {
+                if (Shell.Current.Navigation.ModalStack?.Count > 0)
+                {
+                    await Shell.Current.Navigation.PopModalAsync(true);
+                }
+                else if (Shell.Current.Navigation.NavigationStack?.Count > 1)
+                {
+                    await Shell.Current.Navigation.PopAsync(true);
+                }
+                else
+                {
+                    await Shell.Current.GoToAsync("//calendar", true);
+                }
+            }
+            catch
+            {
+                try { await Shell.Current.GoToAsync("//calendar", true); } catch { }
+            }
         }
         catch (Exception ex)
         {
@@ -144,10 +163,46 @@ public partial class DocumentScanViewModel : ObservableObject
     }
 
     [RelayCommand]
-    public void CloseResult()
+    public async Task CloseResultAsync()
     {
+        Debug.WriteLine("CloseResult invoked");
         ClearScanData();
         ShowResult = false;
+
+        try
+        {
+            // Pop the modal on the main thread to avoid window/drawing race conditions
+            await MainThread.InvokeOnMainThreadAsync(async () =>
+            {
+                // If this page was presented modally, pop the modal
+                if (Shell.Current.Navigation.ModalStack?.Count > 0)
+                {
+                    await Shell.Current.Navigation.PopModalAsync(true);
+                    return;
+                }
+
+                // Otherwise attempt a normal navigation pop (if possible)
+                if (Shell.Current.Navigation.NavigationStack?.Count > 1)
+                {
+                    await Shell.Current.Navigation.PopAsync(true);
+                    return;
+                }
+
+                // As a last resort try Shell navigation to go up one level
+                try
+                {
+                    await Shell.Current.GoToAsync("..", true);
+                }
+                catch
+                {
+                    // ignore failures silently; nothing more we can do
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine($"Error closing scan modal: {ex.Message}");
+        }
     }
 
     private void ClearScanData()

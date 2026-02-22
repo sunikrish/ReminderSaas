@@ -38,10 +38,7 @@ public class ScheduleService : IScheduleService
     /// </summary>
     public async Task<Guid> CreateAsync(CreateScheduleDto dto)
     {
-        if (!Enum.TryParse<ScheduleCategory>(dto.Category, true, out var category))
-        {
-            throw new ArgumentException($"Invalid category: {dto.Category}");
-        }
+        var category = ParseCategory(dto.Category);
 
         var schedule = new Schedule(
             dto.Title,
@@ -65,10 +62,7 @@ public class ScheduleService : IScheduleService
             throw new KeyNotFoundException($"Schedule with ID {dto.Id} not found.");
         }
 
-        if (!Enum.TryParse<ScheduleCategory>(dto.Category, true, out var category))
-        {
-            throw new ArgumentException($"Invalid category: {dto.Category}");
-        }
+        var category = ParseCategory(dto.Category);
 
         schedule.Update(
             dto.Title,
@@ -79,6 +73,20 @@ public class ScheduleService : IScheduleService
             dto.Location);
 
         await _repository.UpdateAsync(schedule);
+    }
+
+    private static ScheduleCategory ParseCategory(string? categoryStr)
+    {
+        if (string.IsNullOrWhiteSpace(categoryStr))
+            return ScheduleCategory.Personal;
+
+        // Remove whitespace and non-alphanumeric chars to match enum identifiers
+        var normalized = new string(categoryStr.Where(char.IsLetterOrDigit).ToArray());
+
+        if (Enum.TryParse<ScheduleCategory>(normalized, true, out var category))
+            return category;
+
+        throw new ArgumentException($"Invalid category: {categoryStr}");
     }
 
     /// <summary>
@@ -94,6 +102,19 @@ public class ScheduleService : IScheduleService
     /// </summary>
     private static ScheduleDto MapToDto(Schedule schedule)
     {
+        // Convert enum identifier to frontend display string (e.g. KidsSchool -> "Kids School")
+        string displayCategory = schedule.Category switch
+        {
+            ScheduleCategory.KidsSchool => "Kids School",
+            ScheduleCategory.Government => "Government",
+            ScheduleCategory.Finance => "Finance",
+            ScheduleCategory.Car => "Car",
+            ScheduleCategory.School => "Kids School",
+            ScheduleCategory.Personal => "Personal",
+            ScheduleCategory.Health => "Health",
+            _ => schedule.Category.ToString()
+        };
+
         return new ScheduleDto(
             schedule.Id,
             schedule.Title,
@@ -101,7 +122,7 @@ public class ScheduleService : IScheduleService
             schedule.Date,
             schedule.Time,
             schedule.Location,
-            schedule.Category.ToString(),
+            displayCategory,
             schedule.CreatedAt,
             schedule.UpdatedAt);
     }

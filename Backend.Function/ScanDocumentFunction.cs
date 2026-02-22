@@ -2,11 +2,12 @@ using Microsoft.Azure.Functions.Worker;
 using Microsoft.Azure.Functions.Worker.Http;
 using Microsoft.Extensions.Logging;
 using System.Text.Json;
+using System.Text;
 using Azure;
 using Azure.AI.DocumentIntelligence;
 using Azure.AI.Translation.Document;
 using Azure.Identity;
-using Azure.AI.OpenAI;
+using OpenAI.Chat;
 
 namespace Backend.Function;
 
@@ -24,7 +25,7 @@ public class ScanDocumentFunction
     
     private static readonly string AzureOpenAIEndpoint = Environment.GetEnvironmentVariable("AZURE_OPENAI_ENDPOINT") ?? "";
     private static readonly string AzureOpenAIKey = Environment.GetEnvironmentVariable("AZURE_OPENAI_KEY") ?? "";
-    private const string AzureOpenAIDeploymentName = "intent-extraction-model";
+    private static readonly string AzureOpenAIDeploymentName = Environment.GetEnvironmentVariable("AZURE_OPENAI_DEPLOYMENT_NAME") ?? "intent-extraction-model";
 
     public ScanDocumentFunction(ILogger<ScanDocumentFunction> logger, HttpClient httpClient)
     {
@@ -38,6 +39,22 @@ public class ScanDocumentFunction
     {
         try
         {
+            // Validate required Azure configuration keys
+            var missing = new List<string>();
+            if (string.IsNullOrWhiteSpace(DocumentIntelligenceEndpoint)) missing.Add(nameof(DocumentIntelligenceEndpoint));
+            if (string.IsNullOrWhiteSpace(DocumentIntelligenceKey)) missing.Add("AZURE_DOCUMENT_INTELLIGENCE_KEY");
+            if (string.IsNullOrWhiteSpace(TranslatorEndpoint)) missing.Add(nameof(TranslatorEndpoint));
+            if (string.IsNullOrWhiteSpace(TranslatorKey)) missing.Add("AZURE_TRANSLATOR_KEY");
+            if (string.IsNullOrWhiteSpace(AzureOpenAIEndpoint)) missing.Add(nameof(AzureOpenAIEndpoint));
+            if (string.IsNullOrWhiteSpace(AzureOpenAIKey)) missing.Add("AZURE_OPENAI_KEY");
+
+            if (missing.Count > 0)
+            {
+                _logger.LogError("Missing configuration keys for ScanDocumentFunction: {Missing}", string.Join(',', missing));
+                var bad = req.CreateResponse(System.Net.HttpStatusCode.InternalServerError);
+                await bad.WriteAsJsonAsync(new { error = "Missing configuration keys", missing });
+                return bad;
+            }
             _logger.LogInformation("Starting document scan analysis");
 
             // Read image from request
@@ -65,6 +82,23 @@ public class ScanDocumentFunction
             // 1. OCR using Azure Document Intelligence
             var ocrText = await PerformOCRAsync(imageData);
             _logger.LogInformation($"OCR completed, text length: {ocrText.Length}");
+
+            // If OCR returned no text, return a sensible empty result instead of
+            // continuing to translation/OpenAI which would either return nothing
+            // or error. This keeps the API predictable for images without text.
+            if (string.IsNullOrWhiteSpace(ocrText))
+            {
+                _logger.LogInformation("OCR returned no text; returning empty analysis result.");
+                var emptyResult = new DocumentAnalysisResultDto(
+                    "unknown",
+                    string.Empty,
+                    false,
+                    null);
+
+                var okResp = req.CreateResponse(System.Net.HttpStatusCode.OK);
+                await okResp.WriteAsJsonAsync(emptyResult);
+                return okResp;
+            }
 
             // 2. Detect language and translate if needed
             var (detectedLanguage, englishText) = await DetectLanguageAndTranslateAsync(ocrText);
@@ -99,7 +133,7 @@ public class ScanDocumentFunction
             var operation = await client.AnalyzeDocumentAsync(
                 WaitUntil.Completed,
                 "prebuilt-read",
-                analyzeDocumentContent: content);
+                content);
 
             var result = operation.Value;
             var text = string.Join("\n", result.Pages.SelectMany(p => p.Lines.Select(l => l.Content)));
@@ -158,32 +192,81 @@ public class ScanDocumentFunction
         try
         {
             var requestBody = new object[] { new { Text = text } };
-            var content = new StringContent(
-                JsonSerializer.Serialize(requestBody),
-                System.Text.Encoding.UTF8,
-                "application/json");
+            var bodyJson = JsonSerializer.Serialize(requestBody);
 
-            var request = new HttpRequestMessage(HttpMethod.Post, 
-                $"{TranslatorEndpoint}translate?api-version=3.0&from={sourceLanguage}&to=en");
-            request.Headers.Add("Ocp-Apim-Subscription-Key", TranslatorKey);
-            request.Headers.Add("Ocp-Apim-Subscription-Region", "germanywestcentral");
-            request.Content = content;
-
-            var response = await _httpClient.SendAsync(request);
-            if (!response.IsSuccessStatusCode)
+            // Try multiple translator endpoint patterns and header styles.
+            var baseEndpoint = TranslatorEndpoint?.TrimEnd('/') ?? "";
+            var candidates = new List<(string url, string headerName, string headerRegion)>
             {
-                _logger.LogWarning($"Translation API returned {response.StatusCode}");
-                return text;
+                // Classic Translator resource pattern (cognitiveservices) - uses Ocp-Apim-Subscription-Key
+                ($"{baseEndpoint}/translate?api-version=3.0&from={sourceLanguage}&to=en", "Ocp-Apim-Subscription-Key", "germanywestcentral"),
+                // AI Services / Foundry pattern for Translator (uses api-key header)
+                ($"{baseEndpoint}/translator/text/v3.0/translate?api-version=3.0&from={sourceLanguage}&to=en", "api-key", null),
+                // Fallback: try translate path on services.ai style endpoint
+                ($"{baseEndpoint}/translate?api-version=3.0&from={sourceLanguage}&to=en", "api-key", null)
+            };
+
+            foreach (var (url, headerName, headerRegion) in candidates)
+            {
+                try
+                {
+                    var request = new HttpRequestMessage(HttpMethod.Post, url);
+                    request.Content = new StringContent(bodyJson, System.Text.Encoding.UTF8, "application/json");
+
+                    if (string.Equals(headerName, "api-key", StringComparison.OrdinalIgnoreCase))
+                    {
+                        request.Headers.Remove("api-key");
+                        request.Headers.Add("api-key", TranslatorKey);
+                    }
+                    else
+                    {
+                        request.Headers.Remove("Ocp-Apim-Subscription-Key");
+                        request.Headers.Add("Ocp-Apim-Subscription-Key", TranslatorKey);
+                    }
+
+                    if (!string.IsNullOrEmpty(headerRegion))
+                    {
+                        request.Headers.Remove("Ocp-Apim-Subscription-Region");
+                        request.Headers.Add("Ocp-Apim-Subscription-Region", headerRegion);
+                    }
+
+                    _logger.LogInformation("Trying Translator URL {Url} with header {Header}", url, headerName);
+                    var response = await _httpClient.SendAsync(request);
+                    var resultJson = await response.Content.ReadAsStringAsync();
+
+                    if (!response.IsSuccessStatusCode)
+                    {
+                        _logger.LogWarning("Translator candidate {Url} returned {Status}: {Body}", url, response.StatusCode, resultJson);
+                        continue;
+                    }
+
+                    using var doc = JsonDocument.Parse(resultJson);
+                    // Classic translate response is an array with translations
+                    if (doc.RootElement.ValueKind == JsonValueKind.Array && doc.RootElement.GetArrayLength() > 0)
+                    {
+                        var translatedText = doc.RootElement[0].GetProperty("translations")[0].GetProperty("text").GetString();
+                        return translatedText ?? text;
+                    }
+
+                    // If the shape is different, attempt to extract a text field gracefully
+                    if (doc.RootElement.TryGetProperty("translations", out var trans) && trans.GetArrayLength() > 0)
+                    {
+                        var t = trans[0].GetProperty("text").GetString();
+                        return t ?? text;
+                    }
+
+                    // If nothing matched, return the raw body as fallback
+                    return text;
+                }
+                catch (Exception ex)
+                {
+                    _logger.LogWarning($"Translator candidate {url} failed: {ex.Message}");
+                    // try next candidate
+                }
             }
 
-            var resultJson = await response.Content.ReadAsStringAsync();
-            using var doc = JsonDocument.Parse(resultJson);
-            var translatedText = doc.RootElement[0]
-                .GetProperty("translations")[0]
-                .GetProperty("text")
-                .GetString();
-
-            return translatedText ?? text;
+            _logger.LogWarning("All translator endpoint candidates failed; returning original text");
+            return text;
         }
         catch (Exception ex)
         {
@@ -194,13 +277,7 @@ public class ScanDocumentFunction
 
     private async Task<DocumentAnalysisResultDto> ExtractStructuredDataAsync(string englishText, string originalText, string detectedLanguage)
     {
-        try
-        {
-            var client = new AzureOpenAIClient(
-                new Uri(AzureOpenAIEndpoint),
-                new AzureKeyCredential(AzureOpenAIKey));
-
-            var systemPrompt = @"You are an AI assistant for a Reminder application designed for German expats.
+                var systemPrompt = @"You are an AI assistant for a Reminder application designed for German expats.
 
 Your responsibilities:
 1. Summarize the document clearly and concisely in English.
@@ -213,47 +290,115 @@ IMPORTANT RULES:
 - If a date, time, or location is not clearly stated, return null.
 - Return valid JSON in this format:
 {
-  ""summary"": ""Brief summary of document"",
-  ""contains_appointment"": true/false,
-  ""appointment"": {
-    ""title"": ""Appointment title"",
-    ""date"": ""2026-02-19"",
-    ""time"": ""14:30"" or null,
-    ""location"": ""Location"" or null,
-    ""category"": ""Government|Kids School|Personal|Health|Car|Finance""
-  } or null
+    ""summary"": ""Brief summary of document"",
+    ""contains_appointment"": true/false,
+    ""appointment"": {
+        ""title"": ""Appointment title"",
+        ""date"": ""2026-02-19"",
+        ""time"": ""14:30"" or null,
+        ""location"": ""Location"" or null,
+        ""category"": ""Government|Kids School|Personal|Health|Car|Finance""
+    } or null
 }";
 
-            var userMessage = $"Analyze this document:\n\n{englishText}";
+                var userMessage = $"Analyze this document:\n\n{englishText}";
 
-            var chatCompletionOptions = new Azure.AI.OpenAI.ChatCompletionOptions
+                try
+        {
+            // Create Azure OpenAI client using the OpenAI package
+            var credential = new System.ClientModel.ApiKeyCredential(AzureOpenAIKey);
+            var options = new OpenAI.OpenAIClientOptions
             {
-                Temperature = 0.3f,
-                MaxTokens = 500,
+                Endpoint = new Uri(AzureOpenAIEndpoint)
+            };
+            
+            _logger.LogInformation("Using OpenAI endpoint {Endpoint} and deployment {Deployment}", AzureOpenAIEndpoint, AzureOpenAIDeploymentName);
+
+            var client = new ChatClient(
+                model: AzureOpenAIDeploymentName,
+                credential,
+                options);
+
+                        var messages = new List<ChatMessage>
+            {
+                new SystemChatMessage(systemPrompt),
+                new UserChatMessage(userMessage)
             };
 
-            chatCompletionOptions.Messages.Add(new Azure.AI.OpenAI.ChatCompletionMessage(
-                Azure.AI.OpenAI.ChatRole.System,
-                systemPrompt));
+            var completionOptions = new ChatCompletionOptions
+            {
+                Temperature = 0.3f,
+            };
 
-            chatCompletionOptions.Messages.Add(new Azure.AI.OpenAI.ChatCompletionMessage(
-                Azure.AI.OpenAI.ChatRole.User,
-                userMessage));
+            var completion = await client.CompleteChatAsync(messages, completionOptions);
 
-            var completion = await client.GetChatCompletionsAsync(
-                AzureOpenAIDeploymentName,
-                chatCompletionOptions);
-
-            var responseText = completion.Value.Choices[0].Message.Content;
+            var responseText = completion.Value.Content[0].Text;
             _logger.LogInformation($"OpenAI response: {responseText}");
 
-            // Parse JSON response
             var result = ParseOpenAIResponse(responseText, detectedLanguage);
             return result;
         }
         catch (Exception ex)
         {
             _logger.LogError($"OpenAI error: {ex.Message}");
+
+            // Fallback: call the Azure OpenAI REST deployments/chat/completions endpoint
+            try
+            {
+                _logger.LogInformation("Attempting REST fallback to OpenAI deployments endpoint");
+
+                var restUrl = $"{AzureOpenAIEndpoint.TrimEnd('/')}/openai/deployments/{AzureOpenAIDeploymentName}/chat/completions?api-version=2023-06-01-preview";
+
+                var restBody = new
+                {
+                    messages = new[] {
+                        new { role = "system", content = systemPrompt },
+                        new { role = "user", content = userMessage }
+                    },
+                    temperature = 0.3f
+                };
+
+                var request = new HttpRequestMessage(HttpMethod.Post, restUrl);
+                request.Headers.Add("api-key", AzureOpenAIKey);
+                request.Content = new StringContent(JsonSerializer.Serialize(restBody), Encoding.UTF8, "application/json");
+
+                var restResp = await _httpClient.SendAsync(request);
+                var restText = await restResp.Content.ReadAsStringAsync();
+
+                if (restResp.IsSuccessStatusCode)
+                {
+                    // Extract assistant content robustly from returned JSON
+                    string assistantText = "";
+                    using (var doc = JsonDocument.Parse(restText))
+                    {
+                        if (doc.RootElement.TryGetProperty("choices", out var choices) && choices.GetArrayLength() > 0)
+                        {
+                            var first = choices[0];
+                            if (first.TryGetProperty("message", out var message) && message.TryGetProperty("content", out var contentProp))
+                            {
+                                assistantText = contentProp.GetString() ?? "";
+                            }
+                            else if (first.TryGetProperty("content", out var contentProp2))
+                            {
+                                assistantText = contentProp2.GetString() ?? "";
+                            }
+                        }
+                    }
+
+                    _logger.LogInformation($"OpenAI REST fallback response: {assistantText}");
+                    var parsed = ParseOpenAIResponse(assistantText, detectedLanguage);
+                    return parsed;
+                }
+                else
+                {
+                    _logger.LogError($"OpenAI REST fallback returned {restResp.StatusCode}: {restText}");
+                }
+            }
+            catch (Exception rex)
+            {
+                _logger.LogError($"OpenAI REST fallback error: {rex.Message}");
+            }
+
             return new DocumentAnalysisResultDto(
                 detectedLanguage,
                 "Unable to analyze document",
@@ -293,6 +438,8 @@ IMPORTANT RULES:
                 var timeStr = apt.TryGetProperty("time", out var timeProp) && timeProp.ValueKind == JsonValueKind.String ? timeProp.GetString() : null;
                 var location = apt.TryGetProperty("location", out var locProp) && locProp.ValueKind == JsonValueKind.String ? locProp.GetString() : null;
                 var category = apt.GetProperty("category").GetString() ?? "Personal";
+                // Map assistant-provided categories to application enum values
+                category = MapToAllowedCategory(category);
 
                 if (DateOnly.TryParse(dateStr, out var date))
                 {
@@ -313,6 +460,37 @@ IMPORTANT RULES:
             _logger.LogError($"Error parsing OpenAI response: {ex.Message}");
             return new DocumentAnalysisResultDto(detectedLanguage, "Error processing response", false, null);
         }
+    }
+
+    private static string MapToAllowedCategory(string raw)
+    {
+        if (string.IsNullOrWhiteSpace(raw))
+            return "Personal";
+
+        var s = raw.Trim().ToLowerInvariant();
+
+        return s switch
+        {
+            // Assistant categories -> frontend display categories
+            "government" => "Government",
+            "kids school" => "Kids School",
+            "kids_school" => "Kids School",
+            "kids-school" => "Kids School",
+            "school" => "Kids School",
+            "health" => "Health",
+            "personal" => "Personal",
+            "car" => "Car",
+            "finance" => "Finance",
+            "financial" => "Finance",
+            "tax" => "Finance",
+            _ =>
+                // Try simple contains checks for robustness
+                s.Contains("school") ? "Kids School" :
+                s.Contains("health") ? "Health" :
+                s.Contains("tax") || s.Contains("finance") ? "Finance" :
+                s.Contains("personal") ? "Personal" :
+                "Other"
+        };
     }
 }
 

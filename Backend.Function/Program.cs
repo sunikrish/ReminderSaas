@@ -20,6 +20,9 @@ builder.Services.AddDbContext<AppDbContext>(options =>
     options.UseSqlServer(
         builder.Configuration.GetConnectionString("SqlConnection")));
 
+// Register HttpClient for functions that need outbound HTTP calls
+builder.Services.AddHttpClient();
+
 // Register Reminder services
 builder.Services.AddScoped<IReminderRepository, ReminderRepository>();
 builder.Services.AddScoped<IReminderService, ReminderService>();

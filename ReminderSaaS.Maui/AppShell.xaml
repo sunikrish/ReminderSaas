@@ -23,8 +23,8 @@
     <FlyoutItem Title="Home" Icon="{FontImage Glyph=🏠, Color={AppThemeBinding Light=#512BD4, Dark=#ac99ea}, Size=24}">
         <ShellContent
             Title="Home"
-            ContentTemplate="{DataTemplate local:MainPage}"
-            Route="MainPage" />
+            ContentTemplate="{DataTemplate schedules:CalendarPage}"
+            Route="calendar" />
     </FlyoutItem>
 
     <FlyoutItem Title="Calendar" Icon="{FontImage Glyph=📅, Color={AppThemeBinding Light=#512BD4, Dark=#ac99ea}, Size=24}">

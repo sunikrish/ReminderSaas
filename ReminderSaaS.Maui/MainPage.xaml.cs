@@ -1,4 +1,5 @@
-﻿using ReminderSaaS.Maui.ViewModels;
+﻿using Microsoft.Extensions.DependencyInjection;
+using ReminderSaaS.Maui.ViewModels;
 
 namespace ReminderSaaS.Maui;
 
@@ -10,14 +11,17 @@ public partial class MainPage : ContentPage
 	public MainPage()
 	{
 		InitializeComponent();
-		try
+		var services = Application.Current?.Handler?.MauiContext?.Services;
+		if (services != null)
 		{
-			_viewModel = new MainShellViewModel();
+			_viewModel = services.GetRequiredService<MainShellViewModel>();
 			this.BindingContext = _viewModel;
 		}
-		catch (Exception ex)
+		else
 		{
-			System.Diagnostics.Debug.WriteLine($"Error creating ViewModel: {ex.Message}");
+			// Fallback: construct with null service provider in unlikely case services are unavailable
+			_viewModel = new MainShellViewModel(null!);
+			this.BindingContext = _viewModel;
 		}
 	}
 

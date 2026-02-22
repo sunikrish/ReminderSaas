@@ -24,12 +24,26 @@ public class ScheduleRepository : IScheduleRepository
         var firstDayOfMonth = new DateOnly(year, month, 1);
         var lastDayOfMonth = firstDayOfMonth.AddMonths(1).AddDays(-1);
 
-        return await _context.Schedules
-            .Where(s => s.Date >= firstDayOfMonth && s.Date <= lastDayOfMonth)
-            .OrderBy(s => s.Date)
-            .ThenBy(s => s.Time)
-            .AsNoTracking()
-            .ToListAsync();
+        // Guard against invalid enum values stored in the database (e.g. 'Tax') which
+        // would cause EF Core to throw when mapping to the `ScheduleCategory` enum.
+        // We project using the provider value of the Category column and only return
+        // rows whose Category string matches a known enum name.
+        var validCategoryNames = Enum.GetNames(typeof(ScheduleCategory));
+
+        // Build a SQL IN list of valid category names and execute a raw SQL
+        // query that returns only rows whose Category matches a known enum
+        // name. We use FromSqlRaw to avoid EF attempting to convert unknown
+        // database strings to the `ScheduleCategory` enum during materialization.
+        var quoted = string.Join(",", validCategoryNames.Select(n => "'" + n.Replace("'", "''") + "'"));
+        var sql = $@"SELECT * FROM [Schedules]
+WHERE [Date] >= {{0}} AND [Date] <= {{1}} AND [Category] IN ({quoted})
+ORDER BY [Date], [Time]";
+
+        var result = _context.Schedules
+            .FromSqlRaw(sql, firstDayOfMonth, lastDayOfMonth)
+            .AsNoTracking();
+
+        return await result.ToListAsync();
     }
 
     /// <summary>

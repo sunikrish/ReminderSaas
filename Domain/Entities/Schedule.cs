@@ -102,9 +102,13 @@ public class Schedule
 /// </summary>
 public enum ScheduleCategory
 {
-    Health,
+    Government,
     Tax,
+    KidsSchool,
     School,
     Personal,
+    Health,
+    Car,
+    Finance,
     Other
 }

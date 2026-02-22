@@ -22,11 +22,11 @@ public static class MauiProgram
 				fonts.AddFont("fa-solid-900.ttf", "FontAwesome");
 			});
 
-		// Register HttpClient for Schedule API
-		var baseUrl = "http://localhost:7071"; // Local development
+		// Register HttpClient for Schedule API (use Functions host port 7147)
+		var baseUrl = "http://localhost:7147"; // Local development (Functions host)
 		if (DeviceInfo.Platform == DevicePlatform.Android)
 		{
-			baseUrl = "http://10.0.2.2:7071"; // Android emulator
+			baseUrl = "http://10.0.2.2:7147"; // Android emulator -> host machine
 		}
 
 		builder.Services.AddSingleton(new HttpClient { BaseAddress = new Uri(baseUrl) });

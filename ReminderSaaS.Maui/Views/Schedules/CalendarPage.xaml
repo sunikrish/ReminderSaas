@@ -9,9 +9,15 @@
         <converters:CountToDotIndicatorConverter x:Key="CountToDotIndicator" />
     </ContentPage.Resources>
 
-    <VerticalStackLayout Padding="10" Spacing="15">
+    <Grid Padding="10">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
         <!-- Month Navigation -->
-        <HorizontalStackLayout HorizontalOptions="Center" Spacing="20">
+        <HorizontalStackLayout Grid.Row="0" HorizontalOptions="Center" Spacing="20">
             <Button Text="◄" 
                     Command="{Binding PreviousMonthCommand}"
                     Padding="12,8"
@@ -31,7 +37,7 @@
         </HorizontalStackLayout>
 
         <!-- Week Headers -->
-        <Grid ColumnDefinitions="*,*,*,*,*,*,*" RowDefinitions="Auto" Padding="2" ColumnSpacing="2">
+        <Grid Grid.Row="1" ColumnDefinitions="*,*,*,*,*,*,*" RowDefinitions="Auto" Padding="2" ColumnSpacing="2">
             <Label Text="Sun" FontAttributes="Bold" FontSize="14" HorizontalTextAlignment="Center" Grid.Column="0"/>
             <Label Text="Mon" FontAttributes="Bold" FontSize="14" HorizontalTextAlignment="Center" Grid.Column="1"/>
             <Label Text="Tue" FontAttributes="Bold" FontSize="14" HorizontalTextAlignment="Center" Grid.Column="2"/>
@@ -42,7 +48,7 @@
         </Grid>
 
         <!-- Calendar Grid -->
-        <ScrollView>
+        <ScrollView Grid.Row="2" Padding="2,2,2,90">
             <VerticalStackLayout Spacing="2" Padding="2">
                 <CollectionView ItemsSource="{Binding CalendarWeeks}">
                     <CollectionView.ItemTemplate>
@@ -135,13 +141,10 @@
                         </DataTemplate>
                     </CollectionView.ItemTemplate>
                 </CollectionView>
-            </VerticalStackLayout>
-        </ScrollView>
-
-        <!-- Schedules for Selected Date -->
-        <Label Text="Schedules for Selected Date" FontAttributes="Bold" FontSize="16" Margin="0,10,0,5"/>
-        
-        <CollectionView ItemsSource="{Binding SchedulesForSelectedDate}">
+            <!-- Schedules for Selected Date -->
+            <Label Text="Schedules for Selected Date" FontAttributes="Bold" FontSize="16" Margin="0,10,0,5"/>
+                
+            <CollectionView ItemsSource="{Binding SchedulesForSelectedDate}">
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Frame Padding="12" Margin="0,5" CornerRadius="8" HasShadow="True">
@@ -164,22 +167,37 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <!-- Add Schedule Button -->
-        <Button Text="➕ Add Schedule" 
-               Margin="0,10"
-               Command="{Binding CreateScheduleCommand}"
-               Padding="15,10"
-               FontSize="14"/>
+                  <!-- Add Schedule button removed per request -->
 
-        <!-- Loading Indicator -->
-        <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" Color="Blue"/>
+                <!-- Loading Indicator -->
+                <ActivityIndicator IsRunning="{Binding IsLoading}" IsVisible="{Binding IsLoading}" Color="Blue"/>
 
-        <!-- Error Message -->
-        <Label Text="{Binding ErrorMessage}" 
-              TextColor="Red" 
-              IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNullOrEmptyBoolConverter}}"
-              Margin="0,10"/>
-    </VerticalStackLayout>
+                <!-- Error Message -->
+                <Label Text="{Binding ErrorMessage}" 
+                      TextColor="Red" 
+                      IsVisible="{Binding ErrorMessage, Converter={StaticResource StringNullOrEmptyBoolConverter}}"
+                      Margin="0,10"/>
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Footer: Camera | Add | Speaker (pinned to bottom) -->
+        <Grid Grid.Row="3" Margin="0,12,0,20" ColumnDefinitions="Auto,*,Auto" HorizontalOptions="FillAndExpand" VerticalOptions="End">
+            <HorizontalStackLayout Grid.Column="0" HorizontalOptions="Start" Padding="0">
+                <Button Text="📷" FontSize="20" WidthRequest="56" HeightRequest="56" CornerRadius="28"
+                        Command="{Binding CameraCommand}" BackgroundColor="#EEEEEE"/>
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout Grid.Column="1" HorizontalOptions="Center" Padding="0" VerticalOptions="Center">
+                <Button Text="+" FontSize="22" WidthRequest="64" HeightRequest="64" CornerRadius="32"
+                        Command="{Binding CreateScheduleCommand}" BackgroundColor="#4CAF50" TextColor="White"/>
+            </HorizontalStackLayout>
+
+            <HorizontalStackLayout Grid.Column="2" HorizontalOptions="End" Padding="0">
+                <Button Text="🔊" FontSize="20" WidthRequest="56" HeightRequest="56" CornerRadius="28"
+                        Command="{Binding SpeakerCommand}" BackgroundColor="#EEEEEE"/>
+            </HorizontalStackLayout>
+        </Grid>
+    </Grid>
 
 </ContentPage>
 

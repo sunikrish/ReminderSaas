@@ -120,8 +120,11 @@ public partial class ScheduleDetailViewModel : ObservableObject
     public string GetCategoryColor() => Schedule?.Category switch
     {
         "Health" => "#FF6B6B",
-        "Tax" => "#4ECDC4",
+        "Finance" => "#4ECDC4",
         "School" => "#45B7D1",
+        "Kids School" => "#45B7D1",
+        "KidsSchool" => "#45B7D1",
+        "Government" => "#45B7D1",
         "Personal" => "#FFA07A",
         "Other" => "#95E1D3",
         _ => "#808080"

@@ -157,8 +157,26 @@ public partial class ScheduleFormViewModel : ObservableObject
             string message = _editingScheduleId.HasValue ? "Schedule updated successfully!" : "Schedule created successfully!";
             await Application.Current!.MainPage!.DisplayAlert("Success", message, "OK");
 
-            // Navigate back to calendar
-            await Shell.Current.GoToAsync("calendar");
+            // Navigate back to calendar. Try modal/pop navigation first, fallback to absolute shell route.
+            try
+            {
+                if (Shell.Current.Navigation.ModalStack?.Count > 0)
+                {
+                    await Shell.Current.Navigation.PopModalAsync();
+                }
+                else if (Shell.Current.Navigation.NavigationStack?.Count > 1)
+                {
+                    await Shell.Current.Navigation.PopAsync();
+                }
+                else
+                {
+                    await Shell.Current.GoToAsync("//calendar");
+                }
+            }
+            catch (Exception exNav)
+            {
+                System.Diagnostics.Debug.WriteLine($"[ScheduleFormViewModel.SaveAsync] Navigation error: {exNav.Message}\n{exNav.StackTrace}");
+            }
         }
         catch (Exception ex)
         {
@@ -180,7 +198,22 @@ public partial class ScheduleFormViewModel : ObservableObject
     {
         try
         {
-            await Shell.Current.GoToAsync("calendar");
+            // Try modal pop first (if opened modally)
+            if (Shell.Current.Navigation.ModalStack?.Count > 0)
+            {
+                await Shell.Current.Navigation.PopModalAsync();
+                return;
+            }
+
+            // Try normal pop
+            if (Shell.Current.Navigation.NavigationStack?.Count > 1)
+            {
+                await Shell.Current.Navigation.PopAsync();
+                return;
+            }
+
+            // Fallback to absolute route to calendar
+            await Shell.Current.GoToAsync("//calendar");
         }
         catch (Exception ex)
         {
